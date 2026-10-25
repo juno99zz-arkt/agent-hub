@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Juno Agent Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0e14; --surface:#151a23; --surface-2:#1a2130;
+    --line:#1e2530; --line-2:#2b3445;
+    --text:#f2f5fa; --muted:#9aa4b4; --dim:#5f6b7e;
+    --accent:#58a6ff; --accent-soft:rgba(88,166,255,.12);
+    --ok:#3fb950; --warn:#d29922;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:"Noto Sans KR",-apple-system,"Segoe UI",sans-serif;
+       letter-spacing:-.014em;line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  .container{max-width:1120px;margin:0 auto;padding:0 32px}
+
+  /* nav */
+  header{position:sticky;top:0;z-index:10;background:rgba(11,14,20,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:15px}
+  .brand svg{display:block}
+  .nav-links{display:flex;gap:26px;font-size:13.5px;color:var(--muted)}
+  .nav-links a:hover{color:var(--text)}
+  .nav-cta{border:1px solid var(--line-2);border-radius:9px;padding:8px 14px;font-size:13.5px;font-weight:600;background:none;color:var(--text);cursor:pointer;font-family:inherit}
+  .nav-cta:hover{border-color:var(--accent)}
+
+  /* hero */
+  .hero{padding:132px 0 96px;border-bottom:1px solid var(--line)}
+  .eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.32em;color:var(--accent);text-transform:uppercase}
+  h1{font-size:clamp(38px,6vw,64px);font-weight:900;letter-spacing:-.03em;line-height:1.18;margin:22px 0 22px}
+  .lead{color:var(--muted);font-size:16.5px;max-width:560px}
+  .stats{display:flex;gap:40px;margin-top:44px;flex-wrap:wrap}
+  .stat b{display:block;font-size:28px;font-weight:900;letter-spacing:-.02em}
+  .stat span{font-size:13px;color:var(--dim)}
+
+  /* sections */
+  section.block{padding:96px 0 0}
+  h2{font-size:clamp(30px,4.2vw,44px);font-weight:900;letter-spacing:-.02em;margin:16px 0 14px}
+  .sub{color:var(--muted);font-size:15px}
+
+  /* toolbar */
+  .toolbar{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:40px 0 24px}
+  .pills{display:flex;gap:8px;flex-wrap:wrap}
+  .pill{border:1px solid var(--line-2);border-radius:999px;padding:9px 20px;font:700 14.5px "Noto Sans KR",sans-serif;color:var(--muted);background:none;cursor:pointer}
+  .pill:hover{color:var(--text)}
+  .pill[aria-pressed="true"]{color:var(--accent);border-color:var(--accent);background:var(--accent-soft)}
+  .search{position:relative;flex:0 1 300px}
+  .search input{width:100%;background:var(--surface);border:1px solid var(--line-2);border-radius:999px;padding:10px 44px 10px 18px;color:var(--text);font:400 14px "Noto Sans KR",sans-serif;outline:none}
+  .search input:focus{border-color:var(--accent)}
+  .search kbd{position:absolute;right:12px;top:50%;transform:translateY(-50%);font:600 11px ui-monospace,monospace;color:var(--dim);border:1px solid var(--line-2);border-radius:5px;padding:1px 6px}
+
+  /* cards */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+  .card{position:relative;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px 24px 22px;transition:border-color .2s,transform .2s,background .2s}
+  .card:hover{border-color:var(--line-2);background:var(--surface-2);transform:translateY(-2px)}
+  .card .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .k{font-size:12px;font-weight:700;letter-spacing:.05em;color:var(--accent)}
+  .num{font:600 11px ui-monospace,monospace;color:var(--dim)}
+  .card h3{font-size:19px;font-weight:700;margin:12px 0 8px;letter-spacing:-.02em}
+  .card p{font-size:13.5px;color:var(--muted);flex:1}
+  .meta{display:flex;flex-wrap:wrap;gap:6px;margin:18px 0 18px}
+  .tag{font-size:11.5px;color:var(--muted);border:1px solid var(--line-2);border-radius:6px;padding:2px 8px;display:inline-flex;align-items:center;gap:6px}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--ok)}
+  .dot.local{background:var(--warn)}
+  .dot.skill{background:var(--accent)}
+  .actions{display:flex;gap:18px;align-items:center;font-size:13.5px;font-weight:700}
+  .actions a,.actions button{color:var(--accent);background:none;border:0;font:inherit;cursor:pointer;padding:0}
+  .actions .sec{color:var(--dim);font-weight:500}
+  .actions .sec:hover{color:var(--text)}
+  .actions a.go:hover,.actions button.go:hover{text-decoration:underline;text-underline-offset:4px}
+  .empty{display:none;color:var(--dim);padding:40px 0;text-align:center;font-size:14px}
+
+  /* how-to */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:36px}
+  .step{border-top:1px solid var(--line-2);padding-top:18px}
+  .step .n{font:700 12px ui-monospace,monospace;color:var(--accent)}
+  .step h4{font-size:16px;margin:8px 0 6px}
+  .step p{font-size:13.5px;color:var(--muted)}
+  code{font:12.5px ui-monospace,Consolas,monospace;background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:var(--text)}
+
+  footer{margin-top:120px;border-top:1px solid var(--line);padding:40px 0 56px;color:var(--dim);font-size:13px}
+  footer .row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+  .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);opacity:0;background:var(--surface-2);border:1px solid var(--line-2);border-radius:10px;padding:10px 16px;font-size:13.5px;transition:.25s;pointer-events:none}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+
+  .rv{opacity:0;transform:translateY(14px);transition:opacity .7s ease,transform .7s ease}
+  .rv.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}.card{transition:none}}
+
+  @media (max-width:760px){
+    .container{padding:0 16px}
+    .nav-links{display:none}
+    .hero{padding:80px 0 64px}
+    section.block{padding:72px 0 0}
+    .grid{grid-template-columns:1fr}
+    .search{flex:1 1 100%}
+    .steps{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container nav">
+    <a class="brand" href="#top">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="12" cy="12" r="3.2" fill="#58a6ff"/>
+        <circle cx="4" cy="5" r="2" fill="#9aa4b4"/><circle cx="20" cy="5" r="2" fill="#9aa4b4"/>
+        <circle cx="4" cy="19" r="2" fill="#9aa4b4"/><circle cx="20" cy="19" r="2" fill="#9aa4b4"/>
+        <path d="M5.5 6.5 9.6 10.2M18.5 6.5l-4.1 3.7M5.5 17.5l4.1-3.7M18.5 17.5l-4.1-3.7" stroke="#58a6ff" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      Juno Agent Hub
+    </a>
+    <nav class="nav-links">
+      <a href="#agents">Agents</a>
+      <a href="#how">사용법</a>
+      <a href="https://github.com/juno99zz-arkt" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+    <button class="nav-cta" id="focusSearch">빠른 검색 /</button>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="container">
+      <div class="eyebrow rv">AGENT HUB · 업무 · 투자 · 생활</div>
+      <h1 class="rv">직접 만든 Agent들,<br>한 곳에서 바로 엽니다</h1>
+      <p class="lead rv">HR 브리핑부터 인력 검색, 조직문화 분석, 투자 대시보드, 여행·메모까지 — 흩어진 바로가기를 이 페이지 하나로 모았습니다.</p>
+      <div class="stats rv" id="stats"></div>
+    </div>
+  </section>
+
+  <section class="block" id="agents">
+    <div class="container">
+      <div class="eyebrow rv">01 — AGENTS</div>
+      <h2 class="rv">내 에이전트</h2>
+      <p class="sub rv">카드를 누르면 새 탭으로 열립니다. 숫자 키 <code>1</code>~<code>9</code>로도 바로 열 수 있습니다.</p>
+
+      <div class="toolbar rv">
+        <div class="pills" id="pills" role="group" aria-label="분류"></div>
+        <label class="search">
+          <input id="q" type="search" placeholder="Agent 검색" aria-label="Agent 검색">
+          <kbd>/</kbd>
+        </label>
+      </div>
+
+      <div class="grid" id="grid"></div>
+      <div class="empty" id="empty">검색 결과가 없습니다.</div>
+    </div>
+  </section>
+
+  <section class="block" id="how">
+    <div class="container">
+      <div class="eyebrow rv">02 — HOW TO</div>
+      <h2 class="rv">새 Agent 추가하기</h2>
+      <p class="sub rv">이 파일 하나만 고치면 됩니다. 별도 서버나 빌드가 필요 없습니다.</p>
+      <div class="steps rv">
+        <div class="step"><div class="n">STEP 1</div><h4>목록 열기</h4><p><code>index.html</code> 아래쪽 <code>AGENTS</code> 배열을 찾습니다.</p></div>
+        <div class="step"><div class="n">STEP 2</div><h4>한 줄 추가</h4><p>기존 항목을 복사해 이름·설명·링크·분류만 바꿉니다.</p></div>
+        <div class="step"><div class="n">STEP 3</div><h4>새로고침</h4><p>카드와 분류 필터, 개수가 자동으로 반영됩니다.</p></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container row">
+    <span>Juno Agent Hub · 정준오</span>
+    <span>로컬 Agent는 해당 폴더의 실행 파일을 먼저 켜야 열립니다.</span>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ── Agent 목록: 여기에 한 줄씩 추가하세요 ──
+   type: "web"(배포된 사이트) | "local"(PC에서 실행 필요) | "skill"(Claude 스킬, 명령어 복사) */
+const AGENTS = [
+  { name:"AI 투자 브리핑", kind:"Investing", cat:"투자", type:"web",
+    desc:"미국 주식 장기투자 대시보드. 매일 시세, 격주 심층분석으로 최대 5종목을 추천합니다.",
+    tags:["매일 17시 시세", "격주 토 추천"],
+    url:"https://juno99zz-arkt.github.io/Invest/",
+    sub:{label:"GitHub", url:"https://github.com/juno99zz-arkt/Invest"} },
+  { name:"HR AI 뉴스브리핑", kind:"AI Briefing", cat:"HR 업무", type:"web",
+    desc:"HR AI T/F를 위한 주간 AI 브리핑. 월·수·금에 새 호가 발행됩니다.",
+    tags:["월·수·금 발행", "Aside 자동 업데이트"],
+    url:"https://juno99zz-arkt.github.io/HR-AI-Briefing/" },
+  { name:"피플팀 데일리 브리프", kind:"News Briefing", cat:"HR 업무", type:"web",
+    desc:"삼성·노동·AI·디스플레이 등 8개 분야 뉴스를 매일 정리하는 HR 피플팀 브리핑.",
+    tags:["매일 07·17시 자동", "메일 발송"],
+    url:"https://juno99zz-arkt.github.io/Hr-Daily-Brief/",
+    sub:{label:"수동 실행", url:"https://github.com/juno99zz-arkt/Hr-Daily-Brief/actions"} },
+  { name:"홍콩·마카오 여행", kind:"Travel", cat:"생활", type:"web",
+    desc:"12월 가족여행 일정·지도를 한 화면에서 보는 여행 앱.",
+    tags:["12/12~12/20", "Claude 아티팩트"],
+    url:"https://claude.ai/artifact/2SMwsyCq3WBeUvLMLDQtdq" },
+  { name:"나의 메모장", kind:"Notes", cat:"생활", type:"web",
+    desc:"떠오르는 생각을 바로 적어 두는 개인 메모 앱.",
+    tags:["모바일"],
+    url:"https://juno99zz-arkt.github.io/memo-app/" },
+  { name:"HR 인력정보 Easy Finder", kind:"People Search", cat:"HR 업무", type:"web",
+    desc:"자연어·상세조건으로 21,000명 인력DB를 검색하고 대시보드·프로필 문서를 만듭니다.",
+    tags:["가상 인력DB", "엑셀 불러오기"],
+    url:"https://juno99zz-arkt.github.io/hr-easy-finder/" },
+  { name:"Culture Insight", kind:"Culture Analytics", cat:"HR 업무", type:"web",
+    desc:"조직문화 진단(SCI) 점수와 서술형 응답을 분석해 부서별 리포트·저해 신호를 보여줍니다.",
+    tags:["암호화 데이터", "비밀번호 필요"],
+    url:"https://juno99zz-arkt.github.io/culture-insight/" },
+  { name:"삼성 워드 보고서", kind:"Claude Skill", cat:"HR 업무", type:"skill",
+    desc:"회의·면담·B/M 녹취록을 삼성식 개조식 .docx 보고서 초안으로 바꿉니다.",
+    tags:["회의·면담·B/M·추진안"],
+    copy:"/samsung-report" },
+  { name:"사내 홍보 스튜디오", kind:"CATV Design", cat:"HR 업무", type:"local",
+    desc:"사내 CATV·DID 홍보 이미지를 AI로 시안 생성합니다. catv-studio 폴더의 시작.cmd를 먼저 실행하세요.",
+    tags:["로컬 :8766"],
+    url:"http://127.0.0.1:8766" },
+  { name:"OPIc AL 트레이너", kind:"Study", cat:"자기계발", type:"web",
+    desc:"내 스크립트를 반복 연습하고 녹음·음성 인식으로 채점합니다. 목표: 2026년 12월 AL.",
+    tags:["모바일", "음성 채점"],
+    url:"https://juno99zz-arkt.github.io/opic-al-trainer/" },
+];
+
+const TYPE_LABEL = { web:"배포됨", local:"로컬 실행", skill:"Claude 스킬" };
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let cat = "전체";
+
+function render(){
+  const q = $("#q").value.trim().toLowerCase();
+  const list = AGENTS.filter(a =>
+    (cat === "전체" || a.cat === cat) &&
+    (!q || [a.name,a.kind,a.desc,a.cat,...a.tags].join(" ").toLowerCase().includes(q)));
+  $("#grid").innerHTML = list.map(a => {
+    const i = AGENTS.indexOf(a) + 1;
+    const dot = a.type === "web" ? "" : a.type;
+    const main = a.type === "skill"
+      ? `<button class="go" data-copy="${esc(a.copy)}">명령어 복사 ${esc(a.copy)}</button>`
+      : `<a class="go" href="${esc(a.url)}" target="_blank" rel="noopener">열기 →</a>`;
+    const sub = a.sub ? `<a class="sec" href="${esc(a.sub.url)}" target="_blank" rel="noopener">${esc(a.sub.label)} ↗</a>` : "";
+    return `<article class="card">
+      <div class="top"><span class="k">${esc(a.kind)}</span><span class="num">${String(i).padStart(2,"0")}</span></div>
+      <h3>${esc(a.name)}</h3>
+      <p>${esc(a.desc)}</p>
+      <div class="meta"><span class="tag"><i class="dot ${dot}"></i>${TYPE_LABEL[a.type]}</span>${a.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join("")}</div>
+      <div class="actions">${main}${sub}</div>
+    </article>`;
+  }).join("");
+  $("#empty").style.display = list.length ? "none" : "block";
+}
+
+function open(a){
+  if (a.type === "skill") return copy(a.copy);
+  window.open(a.url, "_blank", "noopener");
+}
+function copy(text){
+  navigator.clipboard.writeText(text).then(() => toast(`복사됨: ${text} — Claude Code에 붙여넣으세요`), () => toast(text));
+}
+function toast(msg){
+  const t = $("#toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 2200);
+}
+
+// pills & stats
+const cats = ["전체", ...new Set(AGENTS.map(a => a.cat))];
+$("#pills").innerHTML = cats.map(c => `<button class="pill" aria-pressed="${c===cat}">${c}</button>`).join("");
+$("#pills").addEventListener("click", e => {
+  const b = e.target.closest(".pill"); if (!b) return;
+  cat = b.textContent;
+  document.querySelectorAll(".pill").forEach(p => p.setAttribute("aria-pressed", p === b));
+  render();
+});
+const count = t => AGENTS.filter(a => a.type === t).length;
+$("#stats").innerHTML = [
+  [AGENTS.length, "전체 Agent"], [count("web"), "웹 배포"], [count("local") + count("skill"), "로컬 · 스킬"], [cats.length - 1, "분야"]
+].map(([n,l]) => `<div class="stat"><b>${n}</b><span>${l}</span></div>`).join("");
+
+$("#q").addEventListener("input", render);
+$("#grid").addEventListener("click", e => { const b = e.target.closest("[data-copy]"); if (b) copy(b.dataset.copy); });
+$("#focusSearch").addEventListener("click", () => { $("#agents").scrollIntoView(); $("#q").focus(); });
+
+document.addEventListener("keydown", e => {
+  const typing = /INPUT|TEXTAREA/.test(document.activeElement.tagName);
+  if (e.key === "/" && !typing){ e.preventDefault(); $("#agents").scrollIntoView(); $("#q").focus(); return; }
+  if (e.key === "Escape" && typing){ document.activeElement.blur(); return; }
+  if (!typing && !e.ctrlKey && !e.metaKey && !e.altKey && /^[1-9]$/.test(e.key)){
+    const a = AGENTS[+e.key - 1]; if (a) open(a);
+  }
+});
+
+render();
+
+// reveal on scroll
+const io = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting){ x.target.classList.add("in"); io.unobserve(x.target); } }), {threshold:.1});
+document.querySelectorAll(".rv").forEach(el => io.observe(el));
+</script>
+</body>
+</html>
