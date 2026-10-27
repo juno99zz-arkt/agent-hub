@@ -581,12 +581,36 @@ function toast(msg){
   clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 2200);
 }
 
+/* 서버가 15분마다 모아 둔 status.json (허브 저장소의 `status` 브랜치). 방문자가 많아도 GitHub 조회 한도를 쓰지 않는다. */
+const CENTRAL_URL = `https://raw.githubusercontent.com/${OWNER}/agent-hub/status/status.json`;
+const CENTRAL_MAX_AGE = 3 * 60 * 60 * 1000;   // 이보다 오래되면 자동 수집이 멈춘 것으로 보고 직접 조회로 되돌아간다
+async function loadCentral(force){
+  try {
+    const r = await fetch(CENTRAL_URL, { cache: force ? "reload" : "default" });
+    if (!r.ok) return null;
+    const j = await r.json();
+    return { t: Date.parse(j.generated), repos: j.repos || {} };
+  } catch { return null; }
+}
+
 async function refresh(force){
   $("#refresh").classList.add("spin");
-  await Promise.all(AGENTS.filter(a => a.repo).map(async a => { DATA[a.repo] = await loadRepo(a, force); render(); }));
+  const central = await loadCentral(force);
+  const fresh = central && Date.now() - central.t < CENTRAL_MAX_AGE;
+  await Promise.all(AGENTS.filter(a => a.repo).map(async a => {
+    const c = central?.repos[a.repo];
+    if (c && fresh) DATA[a.repo] = { ...c, t: central.t };
+    else {
+      const d = await loadRepo(a, force);
+      DATA[a.repo] = c && d.error ? { ...c, t: central.t, stale: "자동 수집 기록이 오래됨" } : d;
+    }
+    render();
+  }));
   $("#refresh").classList.remove("spin");
   const errs = Object.values(DATA).filter(d => d.error || d.stale).length;
-  $("#updated").textContent = `상태 ${kst(new Date(), { hour:"2-digit", minute:"2-digit", hour12:false })} 기준` + (errs ? ` · ${errs}개 불러오기 실패` : "");
+  const ts = Object.values(DATA).map(d => d.t).filter(Boolean);
+  const at = ts.length ? new Date(Math.min(...ts)) : new Date();
+  $("#updated").textContent = `상태 ${kst(at, { hour:"2-digit", minute:"2-digit", hour12:false })} 기준` + (errs ? ` · ${errs}개 불러오기 실패` : "");
 }
 
 /* ── 이벤트 ── */

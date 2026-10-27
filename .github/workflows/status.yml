@@ -1,0 +1,39 @@
+name: 허브 상태 갱신
+
+# Agent들의 실행 기록을 15분마다 status.json 으로 모아 `status` 브랜치에 올립니다.
+# 허브 화면은 이 파일을 먼저 읽기 때문에, 방문자마다 GitHub 조회 한도(시간당 60회)를 쓰지 않습니다.
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [index.html, .github/scripts/status.mjs]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: hub-status
+  cancel-in-progress: false
+
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: status.json 만들기
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node .github/scripts/status.mjs index.html "$RUNNER_TEMP/status.json"
+      - name: status 브랜치에 올리기 (매번 1개 커밋으로 덮어씀)
+        run: |
+          mkdir "$RUNNER_TEMP/out" && cp "$RUNNER_TEMP/status.json" "$RUNNER_TEMP/out/"
+          cd "$RUNNER_TEMP/out"
+          git init -q -b status
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add status.json
+          git commit -q -m "status $(date -u +%FT%TZ)"
+          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" status
