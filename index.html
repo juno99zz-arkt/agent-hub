@@ -10,7 +10,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Juno Agent Hub</title>
+<title>AI 허브</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -582,7 +582,7 @@ function toast(msg){
 }
 
 /* 서버가 15분마다 모아 둔 status.json (허브 저장소의 `status` 브랜치). 방문자가 많아도 GitHub 조회 한도를 쓰지 않는다. */
-const CENTRAL_URL = `https://raw.githubusercontent.com/${OWNER}/agent-hub/status/status.json`;
+const CENTRAL_URL = `https://raw.githubusercontent.com/${OWNER}/agent-hub/refs/heads/status/status.json`;
 const CENTRAL_MAX_AGE = 3 * 60 * 60 * 1000;   // 이보다 오래되면 자동 수집이 멈춘 것으로 보고 직접 조회로 되돌아간다
 async function loadCentral(force){
   try {
