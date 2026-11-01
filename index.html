@@ -270,6 +270,11 @@
    허브는 GitHub 기록을 읽기만 하고, Agent 설정·스케줄은 바꾸지 않습니다. */
 const OWNER = "juno99zz-arkt";
 const AGENTS = [
+  { name:"NOJI 모닝브리프", kind:"Morning Brief", cat:"생활", type:"web",
+    desc:"일정·동탄 날씨·AI 투자브리프·할일·기한·AI 뉴스·유튜브 화제를 평일 아침 한 화면으로 모아 회사·네이버 메일로 보내고 웹에도 갱신합니다.",
+    tags:["평일 07:00 메일", "Claude 아티팩트"],
+    url:"https://claude.ai/artifact/3F8n7G1nVB2iETxavBuhG1",
+    sched:"평일 06:54 (Claude 예약 작업)" },
   { name:"AI 투자 브리핑", kind:"Investing", cat:"투자", type:"web",
     desc:"미국 주식 장기투자 대시보드. 매일 시세, 격주 심층분석으로 최대 5종목을 추천합니다.",
     tags:["매일 아침 갱신", "월·금 메일 리포트"],
