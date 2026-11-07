@@ -3,8 +3,7 @@ name: 허브 상태 갱신
 # Agent들의 실행 기록을 15분마다 status.json 으로 모아 `status` 브랜치에 올립니다.
 # 허브 화면은 이 파일을 먼저 읽기 때문에, 방문자마다 GitHub 조회 한도(시간당 60회)를 쓰지 않습니다.
 on:
-  schedule:
-    - cron: "*/15 * * * *"
+  # 예약 실행은 Apps Script "GH 디스패처"가 workflow_dispatch로 호출 (GitHub cron 3~6시간 지연 대응, 2026-11-08)
   workflow_dispatch:
   push:
     branches: [main]
