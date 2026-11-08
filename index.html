@@ -272,7 +272,7 @@ const OWNER = "juno99zz-arkt";
 const AGENTS = [
   { name:"NOJI AI 자동화 체계", kind:"System Map", cat:"시스템", type:"web",
     desc:"내 AI 자동화 전체를 한눈에 보는 발표형 체계도. 입력 5갈래 → 옵시디언 볼트, 실행 일정, 이슈·보완 항목, 관리표(T)까지.",
-    tags:["18장 발표", "관리표로 유지관리", "Claude 아티팩트"],
+    tags:["18장 발표 · v4", "관리표로 유지관리", "Claude 아티팩트"],
     url:"https://claude.ai/artifact/N6adnrZQoKjCcQfNbPeU42" },
   { name:"NOJI 모닝브리프", kind:"Morning Brief", cat:"생활", type:"web",
     desc:"일정·동탄 날씨·AI 투자브리프·할일·기한·AI 뉴스·유튜브 화제를 평일 아침 한 화면으로 모아 회사·네이버 메일로 보내고 웹에도 갱신합니다.",
@@ -281,33 +281,36 @@ const AGENTS = [
     sched:"평일 06:54 (Claude 예약 작업)" },
   { name:"AI 투자 브리핑", kind:"Investing", cat:"투자", type:"web",
     desc:"미국 주식 장기투자 대시보드. 매일 시세, 격주 심층분석으로 최대 5종목을 추천합니다.",
-    tags:["매일 아침 갱신", "월·금 메일 리포트"],
+    tags:["매일 아침 갱신", "월·금 07:07 메일"],
     url:"https://juno99zz-arkt.github.io/Invest/",
-    repo:"Invest", workflow:"update_invest.yml" },
+    repo:"Invest", workflow:"update_invest.yml",
+    sched:"매일 06:11 준비(GH 디스패처) → 06:30 분석(Aside) · 월·금 07:07 메일" },
   { name:"HR AI 뉴스브리핑", kind:"AI Briefing", cat:"HR 업무", type:"web",
-    desc:"HR AI T/F를 위한 주간 AI 브리핑. 월·수·금에 새 호가 발행됩니다.",
-    tags:["월·수·금 발행", "Aside 자동 업데이트"],
+    desc:"HR AI T/F를 위한 주간 AI 브리핑. 매주 월요일 아침 새 호가 발행됩니다.",
+    tags:["매주 월 발행", "Aside 자동 업데이트"],
     url:"https://juno99zz-arkt.github.io/HR-AI-Briefing/",
-    repo:"HR-AI-Briefing", sched:"월·수·금 (Aside)" },
+    repo:"HR-AI-Briefing", sched:"매주 월 07:00 (Aside)" },
   { name:"피플팀 데일리 브리프", kind:"News Briefing", cat:"HR 업무", type:"web",
     desc:"삼성·노동·AI·디스플레이 등 8개 분야 뉴스를 매일 정리하는 HR 피플팀 브리핑.",
     tags:["평일 아침 자동", "메일 발송"],
     url:"https://juno99zz-arkt.github.io/Hr-Daily-Brief/",
-    repo:"Hr-Daily-Brief", workflow:"daily_brief.yml" },
+    repo:"Hr-Daily-Brief", workflow:"daily_brief.yml",
+    sched:"평일 05:30 (GH 디스패처) · 07:00 안전망 · 07:10 Claude 안전장치" },
   { name:"홍콩·마카오 여행", kind:"Travel", cat:"생활", type:"web",
     desc:"12월 가족여행 일정·지도를 한 화면에서 보는 여행 앱.",
     tags:["12/12~12/20", "Claude 아티팩트"],
     url:"https://claude.ai/artifact/2SMwsyCq3WBeUvLMLDQtdq" },
   { name:"나의 메모장", kind:"Notes", cat:"생활", type:"web",
-    desc:"떠오르는 생각을 바로 적어 두는 개인 메모 앱. 매주 메모를 옵시디언에 자동 보관합니다.",
+    desc:"떠오르는 생각을 바로 적어 두는 개인 메모 앱. 매일 메모를 옵시디언 0. Inbox/Inbox_memo에 보관하고, 매주 To do를 갱신합니다.",
     tags:["모바일", "옵시디언 자동 보관"],
     url:"https://juno99zz-arkt.github.io/memo-app/",
-    repo:"memo-app", workflow:"obsidian.yml" },
+    repo:"memo-app", workflow:"obsidian.yml",
+    sched:"매일 05:00·22:00 Inbox_memo · 일 07:00 To do (GH 디스패처)" },
   { name:"NOJI캘린더", kind:"Calendar", cat:"생활", type:"web",
     desc:"가족 기념일·부동산 세금·주요 지출·회사 일정을 월간·연간으로 보고 매월 체크하는 개인 캘린더. 음력 일정도 자동 계산합니다.",
     tags:["비밀번호 로그인", "구글 캘린더·옵시디언 매일 동기화"],
     url:"https://juno99zz-arkt.github.io/chaenggim-calendar/",
-    repo:"chaenggim-calendar", sched:"매일 07:30 (Claude 예약 작업)" },
+    repo:"chaenggim-calendar", sched:"매일 04:37 동기화 (GH 디스패처 → memo-app)" },
   { name:"HR 인력정보 Easy Finder", kind:"People Search", cat:"HR 업무", type:"web",
     desc:"자연어·상세조건으로 21,000명 인력DB를 검색하고 대시보드·프로필 문서를 만듭니다.",
     tags:["가상 인력DB", "엑셀 불러오기"],
@@ -459,7 +462,8 @@ function actions(a){
   return play + pause;
 }
 const lastText = (a, i) => i.last ? fmtAgo(new Date(i.last.at)) : a.repo ? (i.s === "unknown" ? "…" : "—") : "—";
-const nextText = (a, i) => i.next[0] ? fmtNext(i.next[0]) : a.sched || (i.s === "paused" ? "꺼짐" : "—");
+// 예약은 GH 디스패처(Apps Script)가 호출하므로 sched 설명을 우선 표시 (2026-11-08)
+const nextText = (a, i) => a.sched || (i.next[0] ? fmtNext(i.next[0]) : (i.s === "paused" ? "꺼짐" : "—"));
 
 function matches(a, i){
   const q = $("#q").value.trim().toLowerCase();
@@ -531,7 +535,9 @@ function renderPanel(){
     a.repo && `<a class="btn" href="https://github.com/${OWNER}/${a.repo}" target="_blank" rel="noopener">GitHub 저장소 ${ICON.open}</a>`,
     a.repo && `<a class="btn" href="https://github.com/${OWNER}/${a.repo}/actions" target="_blank" rel="noopener">전체 실행 기록 ${ICON.open}</a>`,
   ].filter(Boolean).join("");
-  const sched = a.workflow
+  const sched = a.sched && a.workflow
+    ? `<p class="muted">${esc(a.sched)} — GitHub 작업은 Apps Script 'GH 디스패처'가 5분 단위로 정시 호출합니다.</p>`
+    : a.workflow
     ? (i.state === "active"
         ? (i.next.length ? `<ul class="log">${i.next.map(d => `<li><i class="dot run"></i><span class="w">${fmtNext(d)}</span></li>`).join("")}</ul><p class="muted" style="margin-top:8px">예정 시각입니다. GitHub 스케줄은 혼잡하면 늦게 시작될 수 있습니다.</p>` : `<p class="muted">불러오는 중…</p>`)
         : i.state ? `<p class="muted">GitHub에서 스케줄이 꺼져 있습니다. 워크플로 화면에서 Enable하면 다시 켜집니다.</p>` : `<p class="muted">불러오는 중…</p>`)
