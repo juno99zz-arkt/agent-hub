@@ -287,9 +287,9 @@ const AGENTS = [
     sched:"매일 06:11 준비(GH 디스패처) → 06:30 분석(Aside) · 월·금 07:07 메일" },
   { name:"HR AI 뉴스브리핑", kind:"AI Briefing", cat:"HR 업무", type:"web",
     desc:"HR AI T/F를 위한 주간 AI 브리핑. 매주 월요일 아침 새 호가 발행됩니다.",
-    tags:["매주 월 발행", "Aside 자동 업데이트"],
+    tags:["매주 월 발행", "클라우드 자동 업데이트"],
     url:"https://juno99zz-arkt.github.io/HR-AI-Briefing/",
-    repo:"HR-AI-Briefing", sched:"매주 월 07:00 (Aside)" },
+    repo:"HR-AI-Briefing", workflow:"weekly_briefing.yml", sched:"매주 월 07:00 (GH 디스패처 · 11/16 첫 정기 발행)" },
   { name:"피플팀 데일리 브리프", kind:"News Briefing", cat:"HR 업무", type:"web",
     desc:"삼성·노동·AI·디스플레이 등 8개 분야 뉴스를 매일 정리하는 HR 피플팀 브리핑.",
     tags:["평일 아침 자동", "메일 발송"],
@@ -337,7 +337,7 @@ const AGENTS = [
 ];
 
 const TYPE_LABEL = { web:"배포됨", local:"로컬 실행", skill:"Claude 스킬" };
-const STATUS = { run:"실행중", idle:"대기", paused:"일시정지", err:"오류", unknown:"확인 중" };
+const STATUS = { run:"실행중", idle:"대기 / 최근 실행 완료", paused:"일시정지", err:"오류", unknown:"확인 중" };
 const FAIL = ["failure","timed_out","startup_failure"];
 const TTL = 15 * 60 * 1000;   // GitHub 비로그인 조회 한도(시간당 60회) 때문에 15분 캐시
 const $ = s => document.querySelector(s);
@@ -433,14 +433,16 @@ function info(a){
   if (!d) return { s:"unknown", runs:[], next:[] };
   if (d.error) return { s:"unknown", runs:[], next:[], error:d.error };
   const own = a.workflow ? d.runs.filter(r => r.id === d.wfId) : d.runs;
-  const last = own[0] || d.runs[0];
+  const last = own[0];
   const next = d.crons?.length && d.state === "active" ? nextRuns(d.crons, 3) : [];
   let s = "idle", live = false;
   if (last && last.status !== "completed"){ s = "run"; live = true; }
   else if (last && FAIL.includes(last.conclusion)) s = "err";
   else if (a.workflow && d.state && d.state !== "active") s = "paused";
-  else if (a.workflow || a.sched) s = "run";
-  return { s, live, last, runs: d.runs.slice(0, 6), next, state:d.state, wfUrl:d.wfUrl, crons:d.crons, stale:d.stale };
+  else if (a.workflow && last?.conclusion === "success") s = "idle";
+  if (d.checks?.some(c => c.level === "error")) s = "err";
+  else if (d.stale || (a.workflow && !last) || d.checks?.some(c => c.level === "unknown")) s = "unknown";
+  return { s, live, last, runs: d.runs.slice(0, 6), next, state:d.state, wfUrl:d.wfUrl, crons:d.crons, stale:d.stale, checks:d.checks || [] };
 }
 
 /* ── 렌더 ── */
@@ -567,6 +569,7 @@ function renderPanel(){
       ${i.crons?.length ? `<dt>cron (UTC)</dt><dd>${i.crons.map(c => `<code>${esc(c)}</code>`).join(" ")}</dd>` : ""}
     </dl><p class="muted" style="margin-top:10px">설정·스케줄 변경은 GitHub에서 합니다. 허브는 읽기만 합니다.</p></div>
     <div class="p-sec"><h3>다음 실행</h3>${sched}</div>
+    <div class="p-sec"><h3>결과 확인</h3><p class="muted">${i.checks?.length ? i.checks.map(c => esc(c.message)).join("<br>") : "실행 기록 기준입니다. 결과 저장·메일 수신·휴대폰 전달은 별도 확인이 필요합니다."}</p></div>
     <div class="p-sec"><h3>최근 실행 로그</h3>${log}${i.stale ? `<p class="muted" style="margin-top:8px">최신 기록을 못 받아 저장된 기록을 보여줍니다 (${esc(i.stale)}).</p>` : ""}</div>`;
 }
 
@@ -598,7 +601,7 @@ function toast(msg){
 
 /* 서버가 15분마다 모아 둔 status.json (허브 저장소의 `status` 브랜치). 방문자가 많아도 GitHub 조회 한도를 쓰지 않는다. */
 const CENTRAL_URL = `https://raw.githubusercontent.com/${OWNER}/agent-hub/refs/heads/status/status.json`;
-const CENTRAL_MAX_AGE = 3 * 60 * 60 * 1000;   // 이보다 오래되면 자동 수집이 멈춘 것으로 보고 직접 조회로 되돌아간다
+const CENTRAL_MAX_AGE = 45 * 60 * 1000;   // 이보다 오래되면 자동 수집이 멈춘 것으로 보고 직접 조회로 되돌아간다
 async function loadCentral(force){
   try {
     const r = await fetch(CENTRAL_URL, { cache: force ? "reload" : "default" });
@@ -617,7 +620,7 @@ async function refresh(force){
     if (c && fresh) DATA[a.repo] = { ...c, t: central.t };
     else {
       const d = await loadRepo(a, force);
-      DATA[a.repo] = c && d.error ? { ...c, t: central.t, stale: "자동 수집 기록이 오래됨" } : d;
+      DATA[a.repo] = c && d.error ? { ...c, t: central.t, stale: "자동 수집 기록이 오래됨" } : { ...d, stale: d.stale || "자동 결과 점검 미확인 · 실행 기록만 조회됨" };
     }
     render();
   }));
