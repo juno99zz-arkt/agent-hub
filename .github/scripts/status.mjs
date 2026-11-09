@@ -55,7 +55,7 @@ await Promise.all([...targets].map(async ([repo, workflow]) => {
         checks.push({ level:"error", message:"오늘 정기 메일 발송 기록 없음 (수신함 도착은 별도 확인)" });
       if (hour >= 8 && analysis.week !== today)
         checks.push({ level:"error", message:"오늘 AI 분석 결과 없음" });
-      checks.push({ level:"info", message:"분석 기준 " + (analysis.week || "미확인") + " · 메일 기록 " + (Object.keys(mail.sent || {}).sort().at(-1) || "없음") });
+      checks.push({ level:"info", message:"분석 기준 " + (analysis.week || "미확인") + " · 메일 기록 " + (Object.keys(mail.sent || {}).filter(k => /^\d{4}-\d{2}-\d{2}$/.test(k)).sort().at(-1) || "없음") });
     }
     repos[repo] = {
       checks,
