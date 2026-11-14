@@ -1,5 +1,5 @@
 {
- "_note": "AI 허브 등록부. agents=카드 목록, schedule=GH 디스패처 작업표(Apps Script Code.gs JOBS와 같게 유지), todos=직접 할 일, tokens=만료일 수기 목록(30일 전부터 경고). vault=비공개 볼트에서 읽을 신호(파일 날짜·커밋 시각만). 시각은 KST, 요일 0=일~6=토.",
+ "_note": "AI 허브 등록부. agents=카드 목록(cat=분류: 생활·업무·투자·자기계발·시스템 — 화면 위 탭과 아래 묶음이 이 값을 따른다), schedule=GH 디스패처 작업표(Apps Script Code.gs JOBS와 같게 유지), todos=직접 할 일, tokens=만료일 수기 목록(30일 전부터 경고). vault=비공개 볼트에서 읽을 신호(파일 날짜·커밋 시각만). 시각은 KST, 요일 0=일~6=토.",
  "agents": [
   {
    "name": "NoJI AI 사용설명서",
@@ -74,7 +74,7 @@
   {
    "name": "HR AI 뉴스브리핑",
    "kind": "AI Briefing",
-   "cat": "HR 업무",
+   "cat": "업무",
    "type": "web",
    "desc": "HR AI T/F를 위한 주간 AI 브리핑. 매주 월요일 아침 새 호가 발행됩니다.",
    "tags": [
@@ -89,7 +89,7 @@
   {
    "name": "피플팀 데일리 브리프",
    "kind": "News Briefing",
-   "cat": "HR 업무",
+   "cat": "업무",
    "type": "web",
    "desc": "삼성·노동·AI·디스플레이 등 8개 분야 뉴스를 매일 정리하는 HR 피플팀 브리핑.",
    "tags": [
@@ -145,7 +145,7 @@
   {
    "name": "HR 인력정보 Easy Finder",
    "kind": "People Search",
-   "cat": "HR 업무",
+   "cat": "업무",
    "type": "web",
    "desc": "자연어·상세조건으로 21,000명 인력DB를 검색하고 대시보드·프로필 문서를 만듭니다.",
    "tags": [
@@ -158,7 +158,7 @@
   {
    "name": "Culture Insight",
    "kind": "Culture Analytics",
-   "cat": "HR 업무",
+   "cat": "업무",
    "type": "web",
    "desc": "조직문화 진단(SCI) 점수와 서술형 응답을 분석해 부서별 리포트·저해 신호를 보여줍니다.",
    "tags": [
@@ -171,7 +171,7 @@
   {
    "name": "삼성 워드 보고서",
    "kind": "Claude Skill",
-   "cat": "HR 업무",
+   "cat": "업무",
    "type": "skill",
    "desc": "회의·면담·B/M 녹취록을 삼성식 개조식 .docx 보고서 초안으로 바꿉니다.",
    "tags": [
@@ -182,7 +182,7 @@
   {
    "name": "사내 홍보 스튜디오",
    "kind": "CATV Design",
-   "cat": "HR 업무",
+   "cat": "업무",
    "type": "local",
    "desc": "사내 CATV·DID 홍보 이미지를 AI로 시안 생성합니다. catv-studio 폴더의 시작.cmd를 먼저 실행하세요.",
    "tags": [
@@ -206,7 +206,7 @@
   {
    "name": "삼성 노사 뉴스",
    "kind": "News Briefing",
-   "cat": "HR 업무",
+   "cat": "업무",
    "type": "web",
    "desc": "삼성과 노조 관련 보도를 모아 매일 갱신하는 뉴스 비교 페이지.",
    "tags": [
@@ -220,7 +220,7 @@
   {
    "name": "회의록 서비스",
    "kind": "Meeting Notes",
-   "cat": "HR 업무",
+   "cat": "업무",
    "type": "web",
    "desc": "회의가 끝나면 메일함으로 회의록을 받아 보는 개인용 회의록 서비스.",
    "tags": [
@@ -477,6 +477,11 @@
    "title": "11/16(월) 07:30 이후 HR AI 주간 브리핑 첫 클라우드 발행 확인",
    "detail": "메일·사이트·볼트 노트 도착 확인",
    "until": "2026-11-17"
+  },
+  {
+   "title": "11/18쯤 볼트 정리 클라우드 시험 3일 결과 확인",
+   "detail": "결과가 좋으면 적용 전환 · Aside 정리 루틴 정지",
+   "until": "2026-11-20"
   }
  ],
  "tokens": [
