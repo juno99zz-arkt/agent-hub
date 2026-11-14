@@ -626,7 +626,7 @@ function renderOps(){
     const [cls, label] = JOB_STATE[j.state] || ["", j.state];
     const body = `<time>${esc(j.at)}</time><i class="dot ${cls}"></i><span class="w">${esc(j.name)}</span><em class="${j.state}">${label}${j.runAt ? " " + hm(new Date(j.runAt)) : ""}</em>`;
     return `<li>${j.url ? `<a href="${esc(j.url)}" target="_blank" rel="noopener">${body}</a>` : body}</li>`;
-  }).join("") : `<li><span class="w muted">${CENTRAL ? (fresh ? "오늘 예정된 디스패처 작업이 없습니다" : "자동 수집 기록이 오래되어 표시하지 않습니다") : "불러오는 중…"}</span></li>`;
+  }).join("") : `<li><span class="w muted">${CENTRAL ? (fresh ? (CENTRAL.today ? "오늘 예정된 디스패처 작업이 없습니다" : "일정 수집 대기 중 (다음 상태 갱신 때 표시)") : "자동 수집 기록이 오래되어 표시하지 않습니다") : "불러오는 중…"}</span></li>`;
 }
 
 async function refresh(force){
