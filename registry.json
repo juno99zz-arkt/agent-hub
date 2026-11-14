@@ -29,6 +29,30 @@
    "sched": "5분마다 · 작업 9개 + 허브 15분"
   },
   {
+   "name": "NoJI 주간 점검",
+   "kind": "Weekly Audit",
+   "cat": "시스템",
+   "type": "auto",
+   "manual": true,
+   "desc": "매주 금요일 저녁 자동화 전체를 점검합니다. 실패한 정기 작업은 한 번 재실행하고, 허브의 직접 할 일과 사용설명서 데이터를 현재 상태로 맞춘 뒤 보고서를 남깁니다. 피클이 다음 날 아침 보고합니다.",
+   "tags": [
+    "vault-agent (비공개)",
+    "Claude Code",
+    "피클 보고"
+   ],
+   "sched": "매주 금 18:00 무렵 (GitHub 예약) → 토 07:00 피클 보고",
+   "link": "https://github.com/juno99zz-arkt/vault-agent/actions/workflows/weekly-audit.yml",
+   "vault": [
+    {
+     "kind": "file",
+     "path": "3. Area of Responsibility/AI·HR/NoJI 주간 점검",
+     "label": "주간 점검 보고",
+     "maxDays": 8,
+     "firstDue": "2026-11-21"
+    }
+   ]
+  },
+  {
    "name": "NOJI 모닝브리프",
    "kind": "Morning Brief",
    "cat": "생활",
@@ -451,7 +475,8 @@
    ],
    "at": [
     "07:00"
-   ]
+   ],
+   "since": "2026-11-16"
   },
   {
    "id": "invest-report",

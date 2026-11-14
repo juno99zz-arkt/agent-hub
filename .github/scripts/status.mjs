@@ -153,7 +153,12 @@ async function signal(s) {
     const list = await vapi(`contents/${enc(s.path)}`);
     const dates = list.map(f => f.name.match(/(\d{4}-\d{2}-\d{2})/)?.[1]).filter(Boolean).sort();
     const last = dates.at(-1);
-    if (!last) return { level: "error", message: `${s.label} 없음` };
+    if (!last) return today < (s.firstDue || "") ? { level: "ok", message: `${s.label} 첫 실행 전` } : { level: "error", message: `${s.label} 없음` };
+    if (s.maxDays) {   // 매일이 아닌 주기(예: 주간): 마지막 파일이 maxDays 안이면 정상
+      const age = Math.floor((nowMs - Date.parse(last + "T00:00:00+09:00")) / 864e5);
+      const level = age <= s.maxDays ? "ok" : age <= s.maxDays + 2 ? "warn" : "error";
+      return { level, message: `${s.label} 최근 ${last}` + (level === "ok" ? "" : ` · ${age}일 전`), at: `${last}T18:00:00+09:00` };
+    }
     const yesterday = new Date(nowMs + 9 * 3600000 - 864e5).toISOString().slice(0, 10);
     const level = last === today ? "ok" : last === yesterday ? (s.daily && nowMs > kstToMs(s.daily) ? "warn" : "ok") : "error";
     return { level, message: `${s.label} 최근 ${last}` + (level === "ok" ? "" : level === "warn" ? " · 오늘 것 아직 없음" : " · 하루 넘게 없음"), at: `${last}T12:00:00+09:00` };
