@@ -42,6 +42,30 @@
    "sched": "평일 06:54 (Claude 예약 작업)"
   },
   {
+   "name": "주간 일정 브리핑",
+   "kind": "Weekly Schedule",
+   "cat": "생활",
+   "type": "auto",
+   "manual": true,
+   "desc": "월요일 아침 이번 주 일정을 정리해 보내는 Claude 예약 작업.",
+   "tags": [
+    "Claude 예약 작업"
+   ],
+   "sched": "월 06:50 (Claude 예약 작업)"
+  },
+  {
+   "name": "월간 AI 구독 영수증",
+   "kind": "Receipts",
+   "cat": "생활",
+   "type": "auto",
+   "manual": true,
+   "desc": "매달 ChatGPT·Claude 구독료 결제 영수증을 모아 메일로 보내는 Claude 예약 작업.",
+   "tags": [
+    "Claude 예약 작업"
+   ],
+   "sched": "매월 1~10일·26~말일 20:48 (Claude 예약 작업)"
+  },
+  {
    "name": "AI 투자 브리핑",
    "kind": "Investing",
    "cat": "투자",
