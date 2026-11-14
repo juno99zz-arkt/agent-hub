@@ -150,7 +150,7 @@ const rank = { ok: 0, warn: 1, error: 2 };
 async function signal(s) {
   if (s.kind === "file") {
     // 폴더 안 파일 이름의 날짜(YYYY-MM-DD) 중 가장 최근 것. daily: 그 시각이 지나면 오늘 파일을 기대한다.
-    const list = await vapi(`contents/${enc(s.path)}`);
+    const list = await vapi(`contents/${enc(s.path)}`).catch(e => { if (/HTTP 404/.test(e.message)) return []; throw e; });   // 폴더가 아직 없으면 빈 목록
     const dates = list.map(f => f.name.match(/(\d{4}-\d{2}-\d{2})/)?.[1]).filter(Boolean).sort();
     const last = dates.at(-1);
     if (!last) return today < (s.firstDue || "") ? { level: "ok", message: `${s.label} 첫 실행 전` } : { level: "error", message: `${s.label} 없음` };
