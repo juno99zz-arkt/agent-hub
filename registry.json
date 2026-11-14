@@ -243,7 +243,10 @@
    "link": "https://github.com/juno99zz-arkt/vault-agent/actions",
    "repo": "vault-agent",
    "workflow": "digest.yml",
-   "private": true
+   "private": true,
+   "watch": [
+    "tidy.yml"
+   ]
   },
   {
    "name": "옵시디언 정기 정리",
@@ -251,11 +254,11 @@
    "cat": "시스템",
    "type": "auto",
    "manual": true,
-   "desc": "Aside 루틴이 매일 새벽 Inbox를 분류·연결하고 홈과 정리 리포트를 갱신합니다. PC가 켜져 있어야 합니다.",
+   "desc": "Aside 루틴이 매일 새벽 Inbox를 분류·연결하고 홈과 정리 리포트를 갱신합니다(PC 필요). 클라우드판(vault-agent 볼트 정리)을 11/15부터 시험 중 — 시험은 볼트에 쓰지 않습니다.",
    "tags": [
     "Aside",
     "PC 필요",
-    "04:55 PC 깨우기"
+    "클라우드 이전 시험 중"
    ],
    "sched": "매일 05:00 (Aside)",
    "vault": [
