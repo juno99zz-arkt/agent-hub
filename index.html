@@ -93,6 +93,36 @@
   .st{display:inline-flex;align-items:center;gap:7px}
   .num{font:600 11px ui-monospace,monospace;color:var(--dim)}
 
+  .dot.manual{background:transparent;border:1.5px dashed var(--muted)}
+  .dot.todo{background:var(--accent)}
+
+  /* 관제: 조치 필요 + 오늘 일정 */
+  .ops{display:grid;grid-template-columns:1.2fr 1fr;gap:12px;margin-bottom:22px}
+  .box{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;min-width:0}
+  .box h3{font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .box h3 b{background:var(--err);color:#fff;border-radius:999px;font-size:11px;padding:0 7px;line-height:18px}
+  .box h3 b:empty{display:none}
+  .box h3 span{color:var(--muted);font-weight:500;font-size:12px}
+  .box h3 .sub{margin-left:auto;color:var(--dim);font-size:11px}
+  .olist{list-style:none;font-size:13px}
+  .olist li>a,.olist li{display:flex;align-items:flex-start;gap:9px}
+  .olist li{padding:6px 0;border-top:1px solid var(--line)}
+  .olist li:first-child{border-top:0}
+  .olist li>a{flex:1;min-width:0}
+  .olist .dot{margin-top:6px}
+  .olist .w{flex:1;min-width:0;color:var(--text)}
+  .olist a:hover .w{color:var(--accent)}
+  .olist small{display:block;color:var(--dim);font-size:11.5px}
+  .olist li.ok .w{color:var(--muted)}
+  .pill{font-size:10.5px;font-weight:700;color:var(--accent);border:1px solid var(--accent);border-radius:5px;padding:0 5px;margin-right:6px}
+  .sched li{align-items:center}
+  .sched .dot{margin-top:0}
+  .sched time{font:600 12px ui-monospace,Consolas,monospace;color:var(--muted);width:40px;flex:none}
+  .sched .w{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sched em{font-style:normal;font-size:12px;color:var(--dim);white-space:nowrap}
+  .sched em.done{color:var(--ok)} .sched em.fail,.sched em.missed{color:var(--err);font-weight:700} .sched em.due{color:var(--warn)}
+  @media (max-width:900px){.ops{grid-template-columns:1fr}}
+
   .empty{display:none;color:var(--dim);padding:40px 0;text-align:center;font-size:14px}
   .note{margin:22px 0 32px;font-size:12px;color:var(--dim);display:flex;gap:18px;flex-wrap:wrap}
   .note .st{gap:6px}
@@ -225,6 +255,11 @@
     <div class="summary" id="summary"></div>
   </div>
 
+  <section class="ops" aria-label="관제">
+    <div class="box"><h3>조치 필요 <b id="actCount"></b></h3><ul class="olist" id="actions"></ul></div>
+    <div class="box"><h3>오늘 일정 <span id="todayLbl"></span><span class="sub">GH 디스패처 기준</span></h3><ul class="olist sched" id="today"></ul></div>
+  </section>
+
   <div class="toolbar">
     <label class="search">
       <input id="q" type="search" placeholder="Agent 검색" aria-label="Agent 검색">
@@ -255,7 +290,8 @@
     <span class="st"><i class="dot"></i>대기: 최근 실행 완료 또는 수동 앱</span>
     <span class="st"><i class="dot paused"></i>일시정지: GitHub에서 스케줄 꺼짐</span>
     <span class="st"><i class="dot err"></i>오류: 실행 실패 또는 필수 결과 누락</span>
-    <span class="hint">카드를 누르면 상세가 열립니다 · 숫자 키 <code>1</code>~<code>9</code>로 바로 열기 · Agent 추가는 <code>AGENTS</code> 목록에 한 줄</span>
+    <span class="st"><i class="dot manual"></i>수동 확인: GitHub 밖 루틴</span>
+    <span class="hint">카드를 누르면 상세가 열립니다 · 숫자 키 <code>1</code>~<code>9</code>로 바로 열기 · Agent·일정·할 일 추가는 <code>registry.json</code></span>
   </div>
 </main>
 
@@ -264,80 +300,18 @@
 <div class="toast" id="toast" role="status"></div>
 
 <script>
-/* ── Agent 목록: 여기에 한 줄씩 추가하세요 ──
-   type: "web"(배포된 사이트) | "local"(PC에서 실행 필요) | "skill"(Claude 스킬, 명령어 복사)
-   repo: GitHub 저장소 이름(있으면 실행 기록을 불러옴) · workflow: 자동 실행 워크플로 파일 · sched: GitHub 밖 스케줄 설명
+/* ── Agent 목록은 registry.json 의 agents 에 한 줄씩 추가하세요 ──
+   type: "web"(배포된 사이트) | "local"(PC에서 실행 필요) | "skill"(Claude 스킬, 명령어 복사) | "auto"(GitHub 밖 자동 루틴)
+   repo: GitHub 저장소 이름(있으면 실행 기록을 불러옴) · workflow: 자동 실행 워크플로 파일 · watch: 함께 볼 보조 워크플로
+   sched: 스케줄 설명 · manual: 자동 확인 불가(수동 확인) · heartbeat: GH 디스패처 호출 상태로 판정 · link: 상세 링크
+   schedule(디스패처 작업표)·todos(직접 할 일)도 registry.json 에 있습니다.
    허브는 GitHub 기록을 읽기만 하고, Agent 설정·스케줄은 바꾸지 않습니다. */
 const OWNER = "juno99zz-arkt";
-const AGENTS = [
-  { name:"NoJI AI 사용설명서", kind:"User Guide", cat:"시스템", type:"web",
-    desc:"내 AI 자동화 전체를 한눈에 보는 발표형 체계도. 입력 5갈래 → 옵시디언 볼트, 실행 일정, 이슈·보완 항목, 관리표(T)까지.",
-    tags:["18장 발표 · v5", "관리표로 유지관리", "Claude 아티팩트"],
-    url:"https://claude.ai/artifact/N6adnrZQoKjCcQfNbPeU42" },
-  { name:"NOJI 모닝브리프", kind:"Morning Brief", cat:"생활", type:"web",
-    desc:"일정·동탄 날씨·AI 투자브리프·할일·기한·AI 뉴스·유튜브 화제를 평일 아침 한 화면으로 모아 회사·네이버 메일로 보내고 웹에도 갱신합니다.",
-    tags:["평일 07:00 메일", "Claude 아티팩트"],
-    url:"https://claude.ai/artifact/3F8n7G1nVB2iETxavBuhG1",
-    sched:"평일 06:54 (Claude 예약 작업)" },
-  { name:"AI 투자 브리핑", kind:"Investing", cat:"투자", type:"web",
-    desc:"미국 주식 장기투자 대시보드. 매일 시세, 격주 심층분석으로 최대 5종목을 추천합니다.",
-    tags:["매일 아침 갱신", "월·금 07:07 메일"],
-    url:"https://juno99zz-arkt.github.io/Invest/",
-    repo:"Invest", workflow:"update_invest.yml",
-    sched:"매일 06:11 준비(GH 디스패처) → 06:30 분석(Aside) · 월·금 07:07 메일" },
-  { name:"HR AI 뉴스브리핑", kind:"AI Briefing", cat:"HR 업무", type:"web",
-    desc:"HR AI T/F를 위한 주간 AI 브리핑. 매주 월요일 아침 새 호가 발행됩니다.",
-    tags:["매주 월 발행", "클라우드 자동 업데이트"],
-    url:"https://juno99zz-arkt.github.io/HR-AI-Briefing/",
-    repo:"HR-AI-Briefing", workflow:"weekly_briefing.yml", sched:"매주 월 07:00 (GH 디스패처 · 11/16 첫 정기 발행)" },
-  { name:"피플팀 데일리 브리프", kind:"News Briefing", cat:"HR 업무", type:"web",
-    desc:"삼성·노동·AI·디스플레이 등 8개 분야 뉴스를 매일 정리하는 HR 피플팀 브리핑.",
-    tags:["평일 아침 자동", "메일 발송"],
-    url:"https://juno99zz-arkt.github.io/Hr-Daily-Brief/",
-    repo:"Hr-Daily-Brief", workflow:"daily_brief.yml",
-    sched:"평일 05:30 (GH 디스패처) · 07:00 안전망 · 07:10 Claude 안전장치" },
-  { name:"홍콩·마카오 여행", kind:"Travel", cat:"생활", type:"web",
-    desc:"12월 가족여행 일정·지도를 한 화면에서 보는 여행 앱.",
-    tags:["12/12~12/20", "Claude 아티팩트"],
-    url:"https://claude.ai/artifact/2SMwsyCq3WBeUvLMLDQtdq" },
-  { name:"나의 메모장", kind:"Notes", cat:"생활", type:"web",
-    desc:"떠오르는 생각을 바로 적어 두는 개인 메모 앱. 매일 메모를 옵시디언 0. Inbox/Inbox_memo에 보관하고, 매주 To do를 갱신합니다.",
-    tags:["모바일", "옵시디언 자동 보관"],
-    url:"https://juno99zz-arkt.github.io/memo-app/",
-    repo:"memo-app", workflow:"obsidian.yml",
-    sched:"매일 05:00·22:00 Inbox_memo · 일 07:00 To do (GH 디스패처)" },
-  { name:"NOJI캘린더", kind:"Calendar", cat:"생활", type:"web",
-    desc:"가족 기념일·부동산 세금·주요 지출·회사 일정을 월간·연간으로 보고 매월 체크하는 개인 캘린더. 음력 일정도 자동 계산합니다.",
-    tags:["비밀번호 로그인", "구글 캘린더·옵시디언 매일 동기화"],
-    url:"https://juno99zz-arkt.github.io/chaenggim-calendar/",
-    repo:"chaenggim-calendar", sched:"매일 05:15 동기화 (GH 디스패처 → memo-app)" },
-  { name:"HR 인력정보 Easy Finder", kind:"People Search", cat:"HR 업무", type:"web",
-    desc:"자연어·상세조건으로 21,000명 인력DB를 검색하고 대시보드·프로필 문서를 만듭니다.",
-    tags:["가상 인력DB", "엑셀 불러오기"],
-    url:"https://juno99zz-arkt.github.io/hr-easy-finder/",
-    repo:"hr-easy-finder" },
-  { name:"Culture Insight", kind:"Culture Analytics", cat:"HR 업무", type:"web",
-    desc:"조직문화 진단(SCI) 점수와 서술형 응답을 분석해 부서별 리포트·저해 신호를 보여줍니다.",
-    tags:["암호화 데이터", "비밀번호 필요"],
-    url:"https://juno99zz-arkt.github.io/culture-insight/",
-    repo:"culture-insight" },
-  { name:"삼성 워드 보고서", kind:"Claude Skill", cat:"HR 업무", type:"skill",
-    desc:"회의·면담·B/M 녹취록을 삼성식 개조식 .docx 보고서 초안으로 바꿉니다.",
-    tags:["회의·면담·B/M·추진안"],
-    copy:"/samsung-report" },
-  { name:"사내 홍보 스튜디오", kind:"CATV Design", cat:"HR 업무", type:"local",
-    desc:"사내 CATV·DID 홍보 이미지를 AI로 시안 생성합니다. catv-studio 폴더의 시작.cmd를 먼저 실행하세요.",
-    tags:["로컬 :8766"],
-    url:"http://127.0.0.1:8766" },
-  { name:"OPIc AL 트레이너", kind:"Study", cat:"자기계발", type:"web",
-    desc:"내 스크립트를 반복 연습하고 녹음·음성 인식으로 채점합니다. 목표: 2026년 12월 AL.",
-    tags:["모바일", "음성 채점"],
-    url:"https://juno99zz-arkt.github.io/opic-al-trainer/",
-    repo:"opic-al-trainer" },
-];
+let AGENTS = [], REG = { schedule:[], todos:[] }, CENTRAL = null;   // registry.json 에서 채움
 
-const TYPE_LABEL = { web:"배포됨", local:"로컬 실행", skill:"Claude 스킬" };
-const STATUS = { run:"실행중", idle:"대기 / 최근 실행 완료", paused:"일시정지", err:"오류", unknown:"확인 중" };
+
+const TYPE_LABEL = { web:"배포됨", local:"로컬 실행", skill:"Claude 스킬", auto:"자동 루틴" };
+const STATUS = { run:"실행중", idle:"대기 / 최근 실행 완료", paused:"일시정지", err:"오류", unknown:"확인 중", manual:"수동 확인" };
 const FAIL = ["failure","timed_out","startup_failure"];
 const TTL = 15 * 60 * 1000;   // GitHub 비로그인 조회 한도(시간당 60회) 때문에 15분 캐시
 const $ = s => document.querySelector(s);
@@ -428,6 +402,12 @@ async function loadRepo(a, force){
 }
 
 function info(a){
+  if (a.heartbeat){
+    const hb = CENTRAL?.heartbeat;
+    if (!hb) return { s:"unknown", runs:[], next:[] };
+    return { s: hb.ok ? "idle" : "err", runs:[], next:[], last:{ at:hb.last } };
+  }
+  if (a.manual) return { s:"manual", runs:[], next:[] };
   if (!a.repo) return { s:"idle", runs:[], next:[] };
   const d = DATA[a.repo];
   if (!d) return { s:"unknown", runs:[], next:[] };
@@ -516,6 +496,7 @@ function render(){
             <td>${esc(nextText(a, i))}</td>
             <td><div class="acts">${actions(a)}</div></td>
           </tr>`).join("")}</tbody></table></div>`;
+  renderOps();
   $("#view").innerHTML = rows.length ? html : "";
   $("#empty").style.display = rows.length ? "none" : "block";
 
@@ -531,7 +512,7 @@ function renderPanel(){
     ? `<p class="muted">PC에서 프로그램을 켠 뒤 PC에서 여는 앱입니다. 휴대폰에서는 열리지 않습니다.</p>`
     : a.type === "skill"
     ? `<button class="btn primary" data-open="${selected}">명령어 복사 ${esc(a.copy)}</button>`
-    : `<a class="btn primary" href="${esc(a.url)}" target="_blank" rel="noopener">열기 ${ICON.open}</a>`;
+    : a.url || a.link ? `<a class="btn primary" href="${esc(a.url || a.link)}" target="_blank" rel="noopener">${a.url ? "열기" : "기록 보기"} ${ICON.open}</a>` : "";
   const links = [
     a.workflow && `<a class="btn" href="${wfLink(a)}" target="_blank" rel="noopener">${ICON.play} 수동 실행</a>`,
     a.repo && `<a class="btn" href="https://github.com/${OWNER}/${a.repo}" target="_blank" rel="noopener">GitHub 저장소 ${ICON.open}</a>`,
@@ -544,13 +525,16 @@ function renderPanel(){
         ? (i.next.length ? `<ul class="log">${i.next.map(d => `<li><i class="dot run"></i><span class="w">${fmtNext(d)}</span></li>`).join("")}</ul><p class="muted" style="margin-top:8px">예정 시각입니다. GitHub 스케줄은 혼잡하면 늦게 시작될 수 있습니다.</p>` : `<p class="muted">불러오는 중…</p>`)
         : i.state ? `<p class="muted">GitHub에서 스케줄이 꺼져 있습니다. 워크플로 화면에서 Enable하면 다시 켜집니다.</p>` : `<p class="muted">불러오는 중…</p>`)
     : `<p class="muted">${a.sched ? esc(a.sched) + " — GitHub 밖의 루틴이 갱신합니다." : "자동 스케줄이 없는 앱입니다. 필요할 때 엽니다."}</p>`;
-  const log = !a.repo ? `<p class="muted">실행 기록이 없는 Agent입니다 (${TYPE_LABEL[a.type]}).</p>`
+  let log = !a.repo ?`<p class="muted">실행 기록이 없는 Agent입니다 (${TYPE_LABEL[a.type]}).</p>`
     : i.error ? `<p class="muted">기록을 불러오지 못했습니다: ${esc(i.error)}</p>`
     : i.runs.length ? `<ul class="log">${i.runs.map(r => {
         const s = r.status !== "completed" ? "run live" : FAIL.includes(r.conclusion) ? "err" : r.conclusion === "success" ? "run" : "";
         const label = r.name === "pages build and deployment" ? "사이트 배포" : r.name;
         return `<li><a href="${esc(r.url)}" target="_blank" rel="noopener" style="display:contents"><i class="dot ${s}"></i><span class="w">${esc(label)} · ${esc(r.event)}</span><time>${fmtFull(new Date(r.at))}</time></a></li>`;
       }).join("")}</ul>` : `<p class="muted">${i.s === "unknown" ? "불러오는 중…" : "기록이 없습니다."}</p>`;
+  if (a.type === "auto") log = a.heartbeat
+    ? `<p class="muted">${i.last ? `마지막 호출 ${fmtFull(new Date(i.last.at))} (${fmtAgo(new Date(i.last.at))}) — 허브 상태 갱신(15분)을 디스패처가 호출한 시각으로 판정합니다.` : "호출 기록을 불러오는 중…"}</p>`
+    : `<p class="muted">GitHub 밖에서 도는 루틴이라 허브가 자동으로 확인하지 못합니다. 볼트의 AI 작업기록·정리 리포트로 확인하세요.</p>`;
 
   $("#panel").innerHTML = `
     <div class="grab"></div>
@@ -589,6 +573,7 @@ function closePanel(fromBack){
 
 function openAgent(a){
   if (a.type === "skill") return copy(a.copy);
+  if (!a.url) return openPanel(AGENTS.indexOf(a));   // 자동 루틴처럼 열 사이트가 없으면 상세를 보여 준다
   window.open(a.url, "_blank", "noopener");
 }
 function copy(text){
@@ -607,13 +592,47 @@ async function loadCentral(force){
     const r = await fetch(CENTRAL_URL, { cache: force ? "reload" : "default" });
     if (!r.ok) return null;
     const j = await r.json();
-    return { t: Date.parse(j.generated), repos: j.repos || {} };
+    return { t: Date.parse(j.generated), repos: j.repos || {}, today: j.today, heartbeat: j.heartbeat, actions: j.actions || [] };
   } catch { return null; }
+}
+async function loadRegistry(){
+  const r = await fetch("registry.json", { cache:"no-cache" });
+  const j = await r.json();
+  AGENTS = j.agents; REG = { schedule: j.schedule || [], todos: j.todos || [] };
+}
+
+/* ── 관제: 조치 필요 + 오늘 일정 ── */
+const JOB_STATE = { done:["run","완료"], fail:["err","실패"], missed:["err","실행 안 됨"], run:["run live","실행 중"], due:["paused","곧 실행"], wait:["","예정"], unknown:["unknown","확인 불가"] };
+const hm = d => kst(d, { hour:"2-digit", minute:"2-digit", hour12:false });
+function renderOps(){
+  const items = [];
+  const fresh = CENTRAL && Date.now() - CENTRAL.t < CENTRAL_MAX_AGE;
+  if (CENTRAL && !fresh) items.push({ level:"error", title:`상태 자동 수집 멈춤 (마지막 ${fmtAgo(new Date(CENTRAL.t))})`, detail:"GH 디스패처 또는 허브 상태 갱신 워크플로 확인", url:`https://github.com/${OWNER}/agent-hub/actions` });
+  if (fresh) items.push(...CENTRAL.actions);
+  const todayKey = new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
+  for (const t of REG.todos) if (!t.until || todayKey < t.until) items.push({ level:"todo", ...t });
+  $("#actCount").textContent = items.length ? items.length : "";
+  $("#actions").innerHTML = items.length ? items.map(x => {
+    const dot = x.level === "error" ? "err" : x.level === "warn" ? "paused" : "todo";
+    const tag = x.level === "todo" ? `<span class="pill">직접</span>` : "";
+    const body = `<i class="dot ${dot}"></i><span class="w">${tag}${esc(x.title)}${x.detail ? `<small>${esc(x.detail)}</small>` : ""}</span>`;
+    return `<li>${x.url ? `<a href="${esc(x.url)}" target="_blank" rel="noopener">${body}</a>` : body}</li>`;
+  }).join("") : `<li class="ok"><i class="dot run"></i><span class="w">조치할 항목이 없습니다</span></li>`;
+
+  const jobs = fresh ? CENTRAL.today?.jobs || [] : [];
+  const day = CENTRAL?.today ? kst(new Date(CENTRAL.today.date + "T12:00:00+09:00"), { month:"numeric", day:"numeric", weekday:"short" }) : "";
+  $("#todayLbl").textContent = day;
+  $("#today").innerHTML = jobs.length ? jobs.map(j => {
+    const [cls, label] = JOB_STATE[j.state] || ["", j.state];
+    const body = `<time>${esc(j.at)}</time><i class="dot ${cls}"></i><span class="w">${esc(j.name)}</span><em class="${j.state}">${label}${j.runAt ? " " + hm(new Date(j.runAt)) : ""}</em>`;
+    return `<li>${j.url ? `<a href="${esc(j.url)}" target="_blank" rel="noopener">${body}</a>` : body}</li>`;
+  }).join("") : `<li><span class="w muted">${CENTRAL ? (fresh ? "오늘 예정된 디스패처 작업이 없습니다" : "자동 수집 기록이 오래되어 표시하지 않습니다") : "불러오는 중…"}</span></li>`;
 }
 
 async function refresh(force){
   $("#refresh").classList.add("spin");
   const central = await loadCentral(force);
+  CENTRAL = central;
   const fresh = central && Date.now() - central.t < CENTRAL_MAX_AGE;
   await Promise.all(AGENTS.filter(a => a.repo).map(async a => {
     const c = central?.repos[a.repo];
@@ -678,8 +697,8 @@ document.addEventListener("keydown", e => {
   }
 });
 
-setView(view);
-refresh(false);
+loadRegistry().then(() => { setView(view); refresh(false); })
+  .catch(e => { $("#updated").textContent = "등록부(registry.json)를 불러오지 못했습니다"; console.error(e); });
 setInterval(render, 60 * 1000);   // '몇 분 전'·다음 실행 표시 갱신
 </script>
 </body>

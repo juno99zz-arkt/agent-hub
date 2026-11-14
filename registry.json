@@ -1,0 +1,434 @@
+{
+ "_note": "AI 허브 등록부. agents=카드 목록, schedule=GH 디스패처 작업표(Apps Script Code.gs JOBS와 같게 유지), todos=직접 할 일. 시각은 KST, 요일 0=일~6=토.",
+ "agents": [
+  {
+   "name": "NoJI AI 사용설명서",
+   "kind": "User Guide",
+   "cat": "시스템",
+   "type": "web",
+   "desc": "내 AI 자동화 전체를 한눈에 보는 발표형 체계도. 입력 5갈래 → 옵시디언 볼트, 실행 일정, 이슈·보완 항목, 관리표(T)까지.",
+   "tags": [
+    "v6 · 11/8 기준",
+    "관리표로 유지관리",
+    "Claude 아티팩트"
+   ],
+   "url": "https://claude.ai/artifact/N6adnrZQoKjCcQfNbPeU42"
+  },
+  {
+   "name": "GH 디스패처",
+   "kind": "Scheduler",
+   "cat": "시스템",
+   "type": "auto",
+   "heartbeat": true,
+   "desc": "Apps Script가 5분마다 깨어나 정해진 시각의 GitHub 작업을 workflow_dispatch로 실행합니다. 허브의 오늘 일정표가 이 작업표 기준입니다.",
+   "tags": [
+    "Apps Script",
+    "5분 트리거",
+    "3회 연속 실패 시 메일"
+   ],
+   "sched": "5분마다 · 작업 9개 + 허브 15분"
+  },
+  {
+   "name": "NOJI 모닝브리프",
+   "kind": "Morning Brief",
+   "cat": "생활",
+   "type": "web",
+   "desc": "일정·동탄 날씨·AI 투자브리프·할일·기한·AI 뉴스·유튜브 화제를 평일 아침 한 화면으로 모아 회사·네이버 메일로 보내고 웹에도 갱신합니다.",
+   "tags": [
+    "평일 07:00 메일",
+    "Claude 아티팩트"
+   ],
+   "url": "https://claude.ai/artifact/3F8n7G1nVB2iETxavBuhG1",
+   "sched": "평일 06:54 (Claude 예약 작업)"
+  },
+  {
+   "name": "AI 투자 브리핑",
+   "kind": "Investing",
+   "cat": "투자",
+   "type": "web",
+   "desc": "미국 주식 장기투자 대시보드. 매일 시세, 격주 심층분석으로 최대 5종목을 추천합니다.",
+   "tags": [
+    "매일 아침 갱신",
+    "월·금 07:07 메일"
+   ],
+   "url": "https://juno99zz-arkt.github.io/Invest/",
+   "repo": "Invest",
+   "workflow": "update_invest.yml",
+   "sched": "매일 06:11 준비(GH 디스패처) → 06:30 분석(Aside) · 월·금 07:07 메일",
+   "watch": [
+    "invest_agent_dry.yml"
+   ]
+  },
+  {
+   "name": "HR AI 뉴스브리핑",
+   "kind": "AI Briefing",
+   "cat": "HR 업무",
+   "type": "web",
+   "desc": "HR AI T/F를 위한 주간 AI 브리핑. 매주 월요일 아침 새 호가 발행됩니다.",
+   "tags": [
+    "매주 월 발행",
+    "클라우드 자동 업데이트"
+   ],
+   "url": "https://juno99zz-arkt.github.io/HR-AI-Briefing/",
+   "repo": "HR-AI-Briefing",
+   "workflow": "weekly_briefing.yml",
+   "sched": "매주 월 07:00 (GH 디스패처 · 11/16 첫 정기 발행)"
+  },
+  {
+   "name": "피플팀 데일리 브리프",
+   "kind": "News Briefing",
+   "cat": "HR 업무",
+   "type": "web",
+   "desc": "삼성·노동·AI·디스플레이 등 8개 분야 뉴스를 매일 정리하는 HR 피플팀 브리핑.",
+   "tags": [
+    "평일 아침 자동",
+    "메일 발송"
+   ],
+   "url": "https://juno99zz-arkt.github.io/Hr-Daily-Brief/",
+   "repo": "Hr-Daily-Brief",
+   "workflow": "daily_brief.yml",
+   "sched": "평일 05:30 (GH 디스패처) · 07:00 안전망 · 07:10 Claude 안전장치"
+  },
+  {
+   "name": "홍콩·마카오 여행",
+   "kind": "Travel",
+   "cat": "생활",
+   "type": "web",
+   "desc": "12월 가족여행 일정·지도를 한 화면에서 보는 여행 앱.",
+   "tags": [
+    "12/12~12/20",
+    "Claude 아티팩트"
+   ],
+   "url": "https://claude.ai/artifact/2SMwsyCq3WBeUvLMLDQtdq"
+  },
+  {
+   "name": "나의 메모장",
+   "kind": "Notes",
+   "cat": "생활",
+   "type": "web",
+   "desc": "떠오르는 생각을 바로 적어 두는 개인 메모 앱. 매일 메모를 옵시디언 0. Inbox/Inbox_memo에 보관하고, 매주 To do를 갱신합니다.",
+   "tags": [
+    "모바일",
+    "옵시디언 자동 보관"
+   ],
+   "url": "https://juno99zz-arkt.github.io/memo-app/",
+   "repo": "memo-app",
+   "workflow": "obsidian.yml",
+   "sched": "매일 05:00·22:00 Inbox_memo · 일 07:00 To do (GH 디스패처)"
+  },
+  {
+   "name": "NOJI캘린더",
+   "kind": "Calendar",
+   "cat": "생활",
+   "type": "web",
+   "desc": "가족 기념일·부동산 세금·주요 지출·회사 일정을 월간·연간으로 보고 매월 체크하는 개인 캘린더. 음력 일정도 자동 계산합니다.",
+   "tags": [
+    "비밀번호 로그인",
+    "구글 캘린더·옵시디언 매일 동기화"
+   ],
+   "url": "https://juno99zz-arkt.github.io/chaenggim-calendar/",
+   "repo": "chaenggim-calendar",
+   "sched": "매일 05:15 동기화 (GH 디스패처 → memo-app)"
+  },
+  {
+   "name": "HR 인력정보 Easy Finder",
+   "kind": "People Search",
+   "cat": "HR 업무",
+   "type": "web",
+   "desc": "자연어·상세조건으로 21,000명 인력DB를 검색하고 대시보드·프로필 문서를 만듭니다.",
+   "tags": [
+    "가상 인력DB",
+    "엑셀 불러오기"
+   ],
+   "url": "https://juno99zz-arkt.github.io/hr-easy-finder/",
+   "repo": "hr-easy-finder"
+  },
+  {
+   "name": "Culture Insight",
+   "kind": "Culture Analytics",
+   "cat": "HR 업무",
+   "type": "web",
+   "desc": "조직문화 진단(SCI) 점수와 서술형 응답을 분석해 부서별 리포트·저해 신호를 보여줍니다.",
+   "tags": [
+    "암호화 데이터",
+    "비밀번호 필요"
+   ],
+   "url": "https://juno99zz-arkt.github.io/culture-insight/",
+   "repo": "culture-insight"
+  },
+  {
+   "name": "삼성 워드 보고서",
+   "kind": "Claude Skill",
+   "cat": "HR 업무",
+   "type": "skill",
+   "desc": "회의·면담·B/M 녹취록을 삼성식 개조식 .docx 보고서 초안으로 바꿉니다.",
+   "tags": [
+    "회의·면담·B/M·추진안"
+   ],
+   "copy": "/samsung-report"
+  },
+  {
+   "name": "사내 홍보 스튜디오",
+   "kind": "CATV Design",
+   "cat": "HR 업무",
+   "type": "local",
+   "desc": "사내 CATV·DID 홍보 이미지를 AI로 시안 생성합니다. catv-studio 폴더의 시작.cmd를 먼저 실행하세요.",
+   "tags": [
+    "로컬 :8766"
+   ],
+   "url": "http://127.0.0.1:8766"
+  },
+  {
+   "name": "OPIc AL 트레이너",
+   "kind": "Study",
+   "cat": "자기계발",
+   "type": "web",
+   "desc": "내 스크립트를 반복 연습하고 녹음·음성 인식으로 채점합니다. 목표: 2026년 12월 AL.",
+   "tags": [
+    "모바일",
+    "음성 채점"
+   ],
+   "url": "https://juno99zz-arkt.github.io/opic-al-trainer/",
+   "repo": "opic-al-trainer"
+  },
+  {
+   "name": "삼성 노사 뉴스",
+   "kind": "News Briefing",
+   "cat": "HR 업무",
+   "type": "web",
+   "desc": "삼성과 노조 관련 보도를 모아 매일 갱신하는 뉴스 비교 페이지.",
+   "tags": [
+    "평일 07:00 갱신",
+    "GitHub 예약"
+   ],
+   "url": "https://juno99zz-arkt.github.io/samsung-media-war/",
+   "repo": "samsung-media-war",
+   "workflow": "update.yml"
+  },
+  {
+   "name": "회의록 서비스",
+   "kind": "Meeting Notes",
+   "cat": "HR 업무",
+   "type": "web",
+   "desc": "회의가 끝나면 메일함으로 회의록을 받아 보는 개인용 회의록 서비스.",
+   "tags": [
+    "개인용"
+   ],
+   "url": "https://juno99zz-arkt.github.io/meeting-minutes/",
+   "repo": "meeting-minutes"
+  },
+  {
+   "name": "할 일 수집 (시험)",
+   "kind": "Task Digest",
+   "cat": "시스템",
+   "type": "auto",
+   "manual": true,
+   "desc": "볼트의 체크박스와 문장형 할 일을 모아 메모 앱 To do 후보로 정리합니다. 시험 운영 중이라 메모 앱에는 아직 쓰지 않습니다.",
+   "tags": [
+    "vault-agent (비공개)",
+    "GitHub 예약 07:13"
+   ],
+   "sched": "매일 07:13 무렵 (GitHub 예약)",
+   "link": "https://github.com/juno99zz-arkt/vault-agent/actions"
+  },
+  {
+   "name": "옵시디언 정기 정리",
+   "kind": "Vault Tidy",
+   "cat": "시스템",
+   "type": "auto",
+   "manual": true,
+   "desc": "Aside 루틴이 매일 새벽 Inbox를 분류·연결하고 홈과 정리 리포트를 갱신합니다. PC가 켜져 있어야 합니다.",
+   "tags": [
+    "Aside",
+    "PC 필요",
+    "04:55 PC 깨우기"
+   ],
+   "sched": "매일 05:00 (Aside)"
+  },
+  {
+   "name": "통화·녹음 정리",
+   "kind": "Call Notes",
+   "cat": "생활",
+   "type": "auto",
+   "manual": true,
+   "desc": "FolderSync로 올라온 통화·녹음 파일을 Apps Script와 Gemini가 요약해 볼트에 기록합니다.",
+   "tags": [
+    "Apps Script",
+    "Gemini",
+    "거의 실시간"
+   ],
+   "sched": "분 단위 (Apps Script)"
+  },
+  {
+   "name": "메일·유튜브·카톡 수집",
+   "kind": "Collectors",
+   "cat": "시스템",
+   "type": "auto",
+   "manual": true,
+   "desc": "Gemini 예약 작업이 메일·유튜브·카카오톡 요약을 Drive를 거쳐 볼트 Inbox에 올립니다.",
+   "tags": [
+    "Gemini",
+    "Drive _Obsidian_Bridge"
+   ],
+   "sched": "매일 22:00 메일 · 일 07:00 유튜브 · 4시간 카톡"
+  }
+ ],
+ "schedule": [
+  {
+   "id": "inbox-memo",
+   "name": "메모 → Inbox_memo",
+   "repo": "memo-app",
+   "wf": "inbox-memo.yml",
+   "days": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "at": [
+    "05:00",
+    "22:00"
+   ]
+  },
+  {
+   "id": "noji",
+   "name": "NOJI 캘린더 동기화",
+   "repo": "memo-app",
+   "wf": "noji-sync.yml",
+   "days": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "at": [
+    "05:15"
+   ]
+  },
+  {
+   "id": "hr-brief",
+   "name": "피플팀 데일리 브리프",
+   "repo": "Hr-Daily-Brief",
+   "wf": "daily_brief.yml",
+   "days": [
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "at": [
+    "05:30"
+   ]
+  },
+  {
+   "id": "invest-prepare",
+   "name": "투자 분석 준비",
+   "repo": "Invest",
+   "wf": "update_invest.yml",
+   "days": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "at": [
+    "06:11"
+   ]
+  },
+  {
+   "id": "pickle",
+   "name": "피클 브리핑 요약",
+   "repo": "memo-app",
+   "wf": "pickle-digest.yml",
+   "days": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "at": [
+    "06:23"
+   ]
+  },
+  {
+   "id": "memo-weekly",
+   "name": "메모 To do 주간 갱신",
+   "repo": "memo-app",
+   "wf": "obsidian.yml",
+   "days": [
+    0
+   ],
+   "at": [
+    "07:00"
+   ]
+  },
+  {
+   "id": "hr-ai-weekly",
+   "name": "HR AI 주간 브리핑",
+   "repo": "HR-AI-Briefing",
+   "wf": "weekly_briefing.yml",
+   "days": [
+    1
+   ],
+   "at": [
+    "07:00"
+   ]
+  },
+  {
+   "id": "invest-report",
+   "name": "투자 정기 메일",
+   "repo": "Invest",
+   "wf": "update_invest.yml",
+   "days": [
+    1,
+    5
+   ],
+   "at": [
+    "07:07"
+   ]
+  },
+  {
+   "id": "invest-watch",
+   "name": "투자 장중 감시",
+   "repo": "Invest",
+   "wf": "update_invest.yml",
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "at": [
+    "00:07",
+    "02:07",
+    "04:07"
+   ]
+  }
+ ],
+ "todos": [
+  {
+   "title": "Gmail 앱 비밀번호 재발급 → Invest EMAIL_PASSWORD 갱신",
+   "detail": "투자 정기 메일이 11/2 이후 발송되지 않음 (Aside 11/13 기록)",
+   "repo": "Invest"
+  },
+  {
+   "title": "11/16(월) 07:30 이후 HR AI 주간 브리핑 첫 클라우드 발행 확인",
+   "detail": "메일·사이트·볼트 노트 도착 확인",
+   "until": "2026-11-17"
+  }
+ ]
+}
