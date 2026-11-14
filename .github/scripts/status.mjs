@@ -107,7 +107,10 @@ const jobs = slots.map((s, i) => {
   const key = `${s.repo}/${s.wf}`, list = todayRuns[key];
   const nextSame = slots.slice(i + 1).find(x => x.repo === s.repo && x.wf === s.wf);
   const end = Math.min(s.t + WINDOW, nextSame ? nextSame.t - 60000 : Infinity);
-  const run = list?.find(r => !used.has(r.id) && Date.parse(r.created_at) >= s.t - 2 * 60000 && Date.parse(r.created_at) < end);
+  // 디스패처가 시작 실패를 다시 요청한 경우를 위해, 구간 안에 성공한 실행이 있으면 그것을 우선한다.
+  const inWin = list?.filter(r => !used.has(r.id) && Date.parse(r.created_at) >= s.t - 2 * 60000 && Date.parse(r.created_at) < end) || [];
+  const run = inWin.find(r => r.conclusion === "success" || r.status !== "completed") || inWin[0];
+  inWin.forEach(r => used.add(r.id));
   if (run) used.add(run.id);
   let state;
   if (list === null) state = "unknown";

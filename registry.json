@@ -33,25 +33,13 @@
    "kind": "Morning Brief",
    "cat": "생활",
    "type": "web",
-   "desc": "일정·동탄 날씨·AI 투자브리프·할일·기한·AI 뉴스·유튜브 화제를 평일 아침 한 화면으로 모아 회사·네이버 메일로 보내고 웹에도 갱신합니다.",
+   "desc": "일정·동탄 날씨·AI 투자브리프·할일·기한·AI 뉴스·유튜브 화제를 평일 아침 한 화면으로 모아 회사·네이버 메일로 보내고 웹에도 갱신합니다. 월요일에는 한 주 일정까지 다룹니다(주간 일정 브리핑은 11/14 통합).",
    "tags": [
     "평일 07:00 메일",
     "Claude 아티팩트"
    ],
    "url": "https://claude.ai/artifact/3F8n7G1nVB2iETxavBuhG1",
    "sched": "평일 06:54 (Claude 예약 작업)"
-  },
-  {
-   "name": "주간 일정 브리핑",
-   "kind": "Weekly Schedule",
-   "cat": "생활",
-   "type": "auto",
-   "manual": true,
-   "desc": "월요일 아침 이번 주 일정을 정리해 보내는 Claude 예약 작업.",
-   "tags": [
-    "Claude 예약 작업"
-   ],
-   "sched": "월 06:50 (Claude 예약 작업)"
   },
   {
    "name": "월간 AI 구독 영수증",
@@ -111,7 +99,7 @@
    "url": "https://juno99zz-arkt.github.io/Hr-Daily-Brief/",
    "repo": "Hr-Daily-Brief",
    "workflow": "daily_brief.yml",
-   "sched": "평일 05:30 (GH 디스패처) · 07:00 안전망 · 07:10 Claude 안전장치"
+   "sched": "평일 05:30 (GH 디스패처 · 시작 실패 시 재요청) · 07:10 Claude 안전장치"
   },
   {
    "name": "홍콩·마카오 여행",
