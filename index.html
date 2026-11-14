@@ -94,6 +94,7 @@
   .num{font:600 11px ui-monospace,monospace;color:var(--dim)}
 
   .dot.manual{background:transparent;border:1.5px dashed var(--muted)}
+  .dot.warn{background:var(--warn)}
   .dot.todo{background:var(--accent)}
 
   /* 관제: 조치 필요 + 오늘 일정 */
@@ -289,6 +290,7 @@
     <span class="st"><i class="dot run"></i>실행중: 현재 작업 진행 중</span>
     <span class="st"><i class="dot"></i>대기: 최근 실행 완료 또는 수동 앱</span>
     <span class="st"><i class="dot paused"></i>일시정지: GitHub에서 스케줄 꺼짐</span>
+    <span class="st"><i class="dot warn"></i>주의: 볼트 기록이 늦음</span>
     <span class="st"><i class="dot err"></i>오류: 실행 실패 또는 필수 결과 누락</span>
     <span class="st"><i class="dot manual"></i>수동 확인: GitHub 밖 루틴</span>
     <span class="hint">카드를 누르면 상세가 열립니다 · 숫자 키 <code>1</code>~<code>9</code>로 바로 열기 · Agent·일정·할 일 추가는 <code>registry.json</code></span>
@@ -311,7 +313,7 @@ let AGENTS = [], REG = { schedule:[], todos:[] }, CENTRAL = null;   // registry.
 
 
 const TYPE_LABEL = { web:"배포됨", local:"로컬 실행", skill:"Claude 스킬", auto:"자동 루틴" };
-const STATUS = { run:"실행중", idle:"대기 / 최근 실행 완료", paused:"일시정지", err:"오류", unknown:"확인 중", manual:"수동 확인" };
+const STATUS = { run:"실행중", idle:"대기 / 최근 실행 완료", paused:"일시정지", err:"오류", unknown:"확인 중", manual:"수동 확인", warn:"주의" };
 const FAIL = ["failure","timed_out","startup_failure"];
 const TTL = 15 * 60 * 1000;   // GitHub 비로그인 조회 한도(시간당 60회) 때문에 15분 캐시
 const $ = s => document.querySelector(s);
@@ -406,6 +408,10 @@ function info(a){
     const hb = CENTRAL?.heartbeat;
     if (!hb) return { s:"unknown", runs:[], next:[] };
     return { s: hb.ok ? "idle" : "err", runs:[], next:[], last:{ at:hb.last } };
+  }
+  if (a.vault && CENTRAL?.vault?.[a.name]){
+    const v = CENTRAL.vault[a.name];
+    return { s: v.level === "error" ? "err" : v.level === "warn" ? "warn" : "idle", runs:[], next:[], last: v.at ? { at:v.at } : null, checks:[{ message:v.message }] };
   }
   if (a.manual) return { s:"manual", runs:[], next:[] };
   if (!a.repo) return { s:"idle", runs:[], next:[] };
@@ -502,7 +508,7 @@ function render(){
 
   const all = AGENTS.map(info), c = s => all.filter(i => i.s === s).length;
   $("#summary").innerHTML = `<span>전체 <b>${AGENTS.length}</b></span><span>실행중 <b>${c("run")}</b></span><span>대기 <b>${c("idle")}</b></span>`
-    + (c("paused") ? `<span>일시정지 <b>${c("paused")}</b></span>` : "") + `<span>오류 <b style="color:${c("err") ? "var(--err)" : "inherit"}">${c("err")}</b></span>`;
+    + (c("paused") ? `<span>일시정지 <b>${c("paused")}</b></span>` : "") + (c("warn") ? `<span>주의 <b style="color:var(--warn)">${c("warn")}</b></span>` : "") + `<span>오류 <b style="color:${c("err") ? "var(--err)" : "inherit"}">${c("err")}</b></span>`;
   if (selected !== null) renderPanel();
 }
 
@@ -532,8 +538,10 @@ function renderPanel(){
         const label = r.name === "pages build and deployment" ? "사이트 배포" : r.name;
         return `<li><a href="${esc(r.url)}" target="_blank" rel="noopener" style="display:contents"><i class="dot ${s}"></i><span class="w">${esc(label)} · ${esc(r.event)}</span><time>${fmtFull(new Date(r.at))}</time></a></li>`;
       }).join("")}</ul>` : `<p class="muted">${i.s === "unknown" ? "불러오는 중…" : "기록이 없습니다."}</p>`;
-  if (a.type === "auto") log = a.heartbeat
+  if (a.type === "auto" && !a.repo) log = a.heartbeat
     ? `<p class="muted">${i.last ? `마지막 호출 ${fmtFull(new Date(i.last.at))} (${fmtAgo(new Date(i.last.at))}) — 허브 상태 갱신(15분)을 디스패처가 호출한 시각으로 판정합니다.` : "호출 기록을 불러오는 중…"}</p>`
+    : CENTRAL?.vault?.[a.name]
+    ? `<p class="muted">볼트(비공개 저장소)에 마지막으로 올라온 기록 시각으로 판정합니다. PC의 Obsidian이 꺼져 있으면 기록이 늦게 올라와 '주의'로 보일 수 있습니다.</p>`
     : `<p class="muted">GitHub 밖에서 도는 루틴이라 허브가 자동으로 확인하지 못합니다. 볼트의 AI 작업기록·정리 리포트로 확인하세요.</p>`;
 
   $("#panel").innerHTML = `
@@ -592,7 +600,7 @@ async function loadCentral(force){
     const r = await fetch(CENTRAL_URL, { cache: force ? "reload" : "default" });
     if (!r.ok) return null;
     const j = await r.json();
-    return { t: Date.parse(j.generated), repos: j.repos || {}, today: j.today, heartbeat: j.heartbeat, actions: j.actions || [] };
+    return { t: Date.parse(j.generated), repos: j.repos || {}, today: j.today, heartbeat: j.heartbeat, actions: j.actions || [], vault: j.vault };
   } catch { return null; }
 }
 async function loadRegistry(){
@@ -634,7 +642,8 @@ async function refresh(force){
   const central = await loadCentral(force);
   CENTRAL = central;
   const fresh = central && Date.now() - central.t < CENTRAL_MAX_AGE;
-  await Promise.all(AGENTS.filter(a => a.repo).map(async a => {
+  // 비공개 저장소는 방문자 브라우저에서 직접 조회할 수 없으므로 자동 수집 기록만 쓴다.
+  await Promise.all(AGENTS.filter(a => a.repo && (!a.private || central?.repos[a.repo])).map(async a => {
     const c = central?.repos[a.repo];
     if (c && fresh) DATA[a.repo] = { ...c, t: central.t };
     else {

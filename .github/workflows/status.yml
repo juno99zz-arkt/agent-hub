@@ -25,6 +25,7 @@ jobs:
       - name: status.json 만들기
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          HUB_READ_TOKEN: ${{ secrets.HUB_READ_TOKEN }}   # 비공개 볼트·vault-agent 읽기 전용 (없으면 볼트 상태 생략)
         run: node .github/scripts/status.mjs registry.json "$RUNNER_TEMP/status.json"
       - name: status 브랜치에 올리기 (매번 1개 커밋으로 덮어씀)
         run: |

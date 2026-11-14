@@ -1,5 +1,5 @@
 {
- "_note": "AI 허브 등록부. agents=카드 목록, schedule=GH 디스패처 작업표(Apps Script Code.gs JOBS와 같게 유지), todos=직접 할 일. 시각은 KST, 요일 0=일~6=토.",
+ "_note": "AI 허브 등록부. agents=카드 목록, schedule=GH 디스패처 작업표(Apps Script Code.gs JOBS와 같게 유지), todos=직접 할 일, tokens=만료일 수기 목록(30일 전부터 경고). vault=비공개 볼트에서 읽을 신호(파일 날짜·커밋 시각만). 시각은 KST, 요일 0=일~6=토.",
  "agents": [
   {
    "name": "NoJI AI 사용설명서",
@@ -222,14 +222,16 @@
    "kind": "Task Digest",
    "cat": "시스템",
    "type": "auto",
-   "manual": true,
    "desc": "볼트의 체크박스와 문장형 할 일을 모아 메모 앱 To do 후보로 정리합니다. 시험 운영 중이라 메모 앱에는 아직 쓰지 않습니다.",
    "tags": [
     "vault-agent (비공개)",
     "GitHub 예약 07:13"
    ],
    "sched": "매일 07:13 무렵 (GitHub 예약)",
-   "link": "https://github.com/juno99zz-arkt/vault-agent/actions"
+   "link": "https://github.com/juno99zz-arkt/vault-agent/actions",
+   "repo": "vault-agent",
+   "workflow": "digest.yml",
+   "private": true
   },
   {
    "name": "옵시디언 정기 정리",
@@ -243,7 +245,15 @@
     "PC 필요",
     "04:55 PC 깨우기"
    ],
-   "sched": "매일 05:00 (Aside)"
+   "sched": "매일 05:00 (Aside)",
+   "vault": [
+    {
+     "kind": "file",
+     "path": "3. Area of Responsibility/AI·HR/정리 리포트",
+     "label": "정리 리포트",
+     "daily": "07:00"
+    }
+   ]
   },
   {
    "name": "통화·녹음 정리",
@@ -257,7 +267,15 @@
     "Gemini",
     "거의 실시간"
    ],
-   "sched": "분 단위 (Apps Script)"
+   "sched": "분 단위 (Apps Script)",
+   "vault": [
+    {
+     "kind": "commit",
+     "path": "0. Inbox/Inbox_sound",
+     "label": "통화·녹음 기록",
+     "warnHours": 168
+    }
+   ]
   },
   {
    "name": "메일·유튜브·카톡 수집",
@@ -270,7 +288,22 @@
     "Gemini",
     "Drive _Obsidian_Bridge"
    ],
-   "sched": "매일 22:00 메일 · 일 07:00 유튜브 · 4시간 카톡"
+   "sched": "매일 22:00 메일 · 일 07:00 유튜브 · 4시간 카톡",
+   "vault": [
+    {
+     "kind": "commit",
+     "path": "0. Inbox",
+     "msg": "docs(gemini)",
+     "label": "Gemini 동기화",
+     "warnHours": 30
+    },
+    {
+     "kind": "commit",
+     "path": "0. Inbox/Inbox_messenger",
+     "label": "카카오톡 요약",
+     "warnHours": 72
+    }
+   ]
   }
  ],
  "schedule": [
@@ -429,6 +462,21 @@
    "title": "11/16(월) 07:30 이후 HR AI 주간 브리핑 첫 클라우드 발행 확인",
    "detail": "메일·사이트·볼트 노트 도착 확인",
    "until": "2026-11-17"
+  }
+ ],
+ "tokens": [
+  {
+   "name": "GH 디스패처 PAT (Apps Script GH_TOKEN)",
+   "expires": "2027-11-07"
+  },
+  {
+   "name": "Claude 구독 토큰 (CLAUDE_CODE_OAUTH_TOKEN)",
+   "expires": "2027-11-08",
+   "note": "11/8 발급 · 1년 유효 기준 추정"
+  },
+  {
+   "name": "캘린더 연동 토큰",
+   "expires": "2027-10-18"
   }
  ]
 }
