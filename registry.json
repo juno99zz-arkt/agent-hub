@@ -130,12 +130,12 @@
    "kind": "Travel",
    "cat": "생활",
    "type": "web",
-   "desc": "12월 가족여행 일정·지도를 한 화면에서 보는 여행 앱.",
+   "desc": "12월 가족여행 일정·사진·날짜별 지도·체크리스트(비고)를 한 곳에서 보는 여행 앱. Google 클라우드에서 운영되어 PC가 꺼져도 열립니다.",
    "tags": [
     "12/12~12/20",
-    "Claude 아티팩트"
+    "Google Apps Script 웹앱"
    ],
-   "url": "https://claude.ai/artifact/2SMwsyCq3WBeUvLMLDQtdq"
+   "url": "https://script.google.com/macros/s/AKfycbxmXZ-MVE1B8ZCfRQ9IrcmeHZRFQiBEeGksUXcFLgL9GHShMSD4p3T4h8xgcFLbmyNO_w/exec"
   },
   {
    "name": "나의 메모장",
