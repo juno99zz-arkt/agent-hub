@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#f1f1f3" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#141415" media="(prefers-color-scheme: dark)">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -19,9 +19,9 @@
   /* 방향: 차분·정확·약간 따뜻함 / 세계: 새벽 운행표. 풍부한 곳은 '오늘 일정' 운행표 한 곳, 나머지는 조용하게.
      크기 12·13·14·16·24 / 굵기 400·500 / 반경 4·8·12 / 간격 4px 단위 / 강조색은 '지금'과 포커스에만 */
   :root{
-    --bg:#fafafa; --surface:#ffffff; --raised:#f4f4f5;
-    --line:rgba(23,23,23,.08); --line-2:rgba(23,23,23,.16);
-    --text:#171717; --muted:#525252; --dim:#737373;
+    --bg:#f1f1f3; --surface:#ffffff; --raised:#e9e9ec;
+    --line:rgba(23,23,23,.10); --line-2:rgba(23,23,23,.18);
+    --text:#111113; --muted:#3f3f46; --dim:#62626b;
     --accent:#2f5fd3;
     --ok:#15803d; --warn:#b45309; --err:#dc2626; --idle:#a3a3a3;
     --shadow:0 8px 24px rgba(0,0,0,.06);
@@ -83,10 +83,17 @@
   @keyframes live{50%{opacity:.35}}
 
   /* 앱 아이콘: 선 아이콘 한 벌(1.5 굵기) + 이상이 있을 때만 모서리 상태 점 */
-  .ic{--ring:var(--bg);position:relative;flex:none;display:grid;place-items:center;width:32px;height:32px;border-radius:8px;background:var(--raised);color:var(--muted)}
+  .ic{--ring:var(--bg);position:relative;flex:none;display:grid;place-items:center;width:32px;height:32px;border-radius:8px;background:var(--cb,var(--raised));color:var(--c,var(--muted))}
   .ic svg{width:18px;height:18px}
   .ic .dot{position:absolute;top:-3px;right:-3px;width:10px;height:10px;box-shadow:0 0 0 2px var(--ring)}
-  .card:hover .ic,.card.sel .ic{--ring:var(--raised);background:var(--surface)}
+  .card:hover .ic,.card.sel .ic{--ring:var(--raised)}
+  /* 분류 색: 분류마다 한 색. 아이콘 칸과 묶음 제목 표식에만 쓴다 */
+  .c-life{--c:#0f7a4f;--cb:#d9f1e4} .c-work{--c:#2457c5;--cb:#dfe8fc} .c-invest{--c:#b45309;--cb:#fbe8cf}
+  .c-grow{--c:#be185d;--cb:#fbe1ec} .c-sys{--c:#475569;--cb:#e1e5ec}
+  @media (prefers-color-scheme:dark){
+    .c-life{--c:#5fd3a0;--cb:rgba(95,211,160,.15)} .c-work{--c:#8fb0f5;--cb:rgba(143,176,245,.15)} .c-invest{--c:#f0b45a;--cb:rgba(240,180,90,.15)}
+    .c-grow{--c:#f38bb5;--cb:rgba(243,139,181,.15)} .c-sys{--c:#a7b1c2;--cb:rgba(167,177,194,.14)}
+  }
   .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
   /* 관제: 조치 필요 + 오늘 일정(운행표) */
@@ -160,7 +167,8 @@
   /* 분류 묶음 · 줄 목록 */
   .grp{margin-top:32px}
   .grp:first-child{margin-top:16px}
-  .grp>h2{display:flex;align-items:baseline;gap:8px;font-size:13px;font-weight:500;color:var(--muted);padding-bottom:8px;border-bottom:1px solid var(--line-2)}
+  .grp>h2{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500;color:var(--text);padding-bottom:8px;border-bottom:1px solid var(--line-2)}
+  .grp>h2::before{content:"";width:8px;height:8px;border-radius:2px;background:var(--c,var(--dim))}
   .grp>h2 small{font:400 12px var(--mono);color:var(--dim)}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));column-gap:32px}
   .card{display:flex;align-items:center;gap:12px;height:56px;border-bottom:1px solid var(--line);padding:0 4px;cursor:pointer;transition:background-color .15s var(--ease)}
@@ -283,11 +291,11 @@
     .tile .ic{--ring:var(--surface);width:48px;height:48px;border-radius:12px}
     .tile .ic svg{width:24px;height:24px}
     .tile .info{position:absolute;top:0;right:0;width:36px;height:36px;color:var(--idle)}
-    .tile .name{justify-content:center;font-size:13px;line-height:18px;min-height:36px;width:100%;font-weight:400;color:var(--text)}
+    .tile .name{justify-content:center;font-size:13px;line-height:18px;min-height:36px;width:100%;font-weight:500;color:var(--text)}
     .tile .name span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:keep-all}
     .row:active{background:var(--raised)}
     .tile:active{background:var(--raised);transform:scale(.98)}
-    .tile:active .ic{--ring:var(--raised);background:var(--surface)}
+    .tile:active .ic{--ring:var(--raised)}
 
     .note{margin:24px 0 8px}
 
@@ -539,6 +547,7 @@ function matches(a, i){
 
 /* 분류: 위 탭과 아래 묶음의 순서. 새 분류는 registry.json 의 cat 에 쓰면 맨 뒤에 붙는다 */
 const CATS = ["생활", "업무", "투자", "자기계발", "시스템"];
+const CAT_CLS = { "생활":"c-life", "업무":"c-work", "투자":"c-invest", "자기계발":"c-grow", "시스템":"c-sys" };
 const DOTS = '<svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="3" cy="8" r="1.4"/><circle cx="8" cy="8" r="1.4"/><circle cx="13" cy="8" r="1.4"/></svg>';
 const dotHtml = i => `<i class="dot ${i.s}${i.live ? " live" : ""}" title="${STATUS[i.s]}"></i>`;
 
@@ -619,7 +628,7 @@ function render(){
             <td>${esc(nextText(a, i))}</td>
             <td><div class="acts">${actions(a)}</div></td>
           </tr>`).join("")}</tbody>`).join("")}</table></div>`
-    : groups.map(g => `<section class="grp">${head(g)}${itemsHtml(g.rows)}</section>`).join("");
+    : groups.map(g => `<section class="grp ${CAT_CLS[g.c] || "c-sys"}">${head(g)}${itemsHtml(g.rows)}</section>`).join("");
   renderOps();
   $("#view").innerHTML = rows.length ? html : "";
   $("#empty").style.display = rows.length ? "none" : "block";
