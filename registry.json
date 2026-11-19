@@ -254,16 +254,16 @@
    "repo": "meeting-minutes"
   },
   {
-   "name": "할 일 수집 (시험)",
+   "name": "할 일 수집",
    "kind": "Task Digest",
    "cat": "시스템",
    "type": "auto",
-   "desc": "볼트의 체크박스와 문장형 할 일을 모아 메모 앱 To do 후보로 정리합니다. 시험 운영 중이라 메모 앱에는 아직 쓰지 않습니다.",
+   "desc": "볼트의 체크박스와 문장형 할 일을 모아 매일 06:05 브리핑/할 일·주요사항.md에 정리합니다(피클 브리핑 ②). 메모 앱에는 쓰지 않습니다.",
    "tags": [
     "vault-agent (비공개)",
-    "GitHub 예약 07:13"
+    "디스패처 06:05"
    ],
-   "sched": "매일 07:13 무렵 (GitHub 예약)",
+   "sched": "매일 06:05 (디스패처)",
    "link": "https://github.com/juno99zz-arkt/vault-agent/actions",
    "repo": "vault-agent",
    "workflow": "digest.yml",
@@ -417,6 +417,24 @@
    ],
    "at": [
     "06:00"
+   ]
+  },
+  {
+   "id": "todo-digest",
+   "name": "할 일 수집",
+   "repo": "vault-agent",
+   "wf": "digest.yml",
+   "days": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "at": [
+    "06:05"
    ]
   },
   {
