@@ -40,7 +40,7 @@
     "Claude Code",
     "피클 보고"
    ],
-   "sched": "매주 금 18:00 무렵 (GitHub 예약) → 토 07:00 피클 보고",
+   "sched": "매주 금 18:00 (GH 디스패처 · GitHub 예약 병행) → 토 07:00 피클 보고",
    "link": "https://github.com/juno99zz-arkt/vault-agent/actions/workflows/weekly-audit.yml",
    "vault": [
     {
@@ -417,7 +417,8 @@
    ],
    "at": [
     "06:00"
-   ]
+   ],
+   "since": "2026-11-19"
   },
   {
    "id": "todo-digest",
@@ -435,7 +436,8 @@
    ],
    "at": [
     "06:05"
-   ]
+   ],
+   "since": "2026-11-19"
   },
   {
    "id": "pickle",
@@ -526,6 +528,19 @@
    "at": [
     "07:07"
    ]
+  },
+  {
+   "id": "weekly-audit",
+   "name": "NoJI 주간 점검",
+   "repo": "vault-agent",
+   "wf": "weekly-audit.yml",
+   "days": [
+    5
+   ],
+   "at": [
+    "18:00"
+   ],
+   "since": "2026-11-27"
   }
  ],
  "todos": [
@@ -537,11 +552,6 @@
   {
    "title": "카카오톡 요약 수집 확인",
    "detail": "Gemini 예약 작업에서 4시간 스케줄러·내보내기 메일 확인 (마지막 요약 12일 전)",
-   "until": "2026-11-28"
-  },
-  {
-   "title": "오늘 투자 AI 분석 결과 없음 — Aside 루틴 확인",
-   "detail": "Aside 06:30 루틴이 도는지(PC 켜짐·절전) 확인. 클라우드 시험 전환 결정도 함께",
    "until": "2026-11-28"
   }
  ],

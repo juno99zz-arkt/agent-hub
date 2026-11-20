@@ -91,7 +91,7 @@ await Promise.all([...targets].map(async ([repo, { workflow, watch, name }]) => 
 // ── 오늘 일정: GH 디스패처 작업표(registry.schedule)의 예정 시각과 실제 실행을 맞춰 본다 ──
 const MISS_AFTER = 20 * 60000;    // 디스패처는 5분 간격이므로 20분이 지나도 실행이 없으면 누락
 const WINDOW = 60 * 60000;        // 디스패처는 예정 시각부터 60분 안에만 실행
-const slots = registry.schedule.flatMap(j => j.days.includes(dow) ? j.at.map(at => ({ ...j, at, t: kstToMs(at) })) : [])
+const slots = registry.schedule.filter(j => !j.since || today >= j.since).flatMap(j => j.days.includes(dow) ? j.at.map(at => ({ ...j, at, t: kstToMs(at) })) : [])
   .sort((a, b) => a.t - b.t);
 const todayRuns = {};
 await Promise.all([...new Set(slots.map(s => `${s.repo}/${s.wf}`))].map(async key => {
