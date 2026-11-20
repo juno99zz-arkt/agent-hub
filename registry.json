@@ -277,14 +277,13 @@
    "kind": "Vault Tidy",
    "cat": "시스템",
    "type": "auto",
-   "manual": true,
-   "desc": "Aside 루틴이 매일 새벽 Inbox를 분류·연결하고 홈과 정리 리포트를 갱신합니다(PC 필요). 클라우드판(vault-agent 볼트 정리)은 11/19부터 06:00에 오늘 리포트가 없을 때만(PC 절전 등) 대신 정리해 볼트에 반영합니다.",
+   "desc": "매일 새벽 Inbox를 분류·연결하고 홈과 정리 리포트를 갱신합니다. 11/20부터 클라우드(GitHub)가 주 경로이고, PC의 Aside 05:00 정리는 멈추는 중입니다. 클라우드는 Gmail·NOJI 원본 대조와 삭제를 하지 않습니다.",
    "tags": [
-    "Aside",
-    "PC 필요",
-    "클라우드 이전 시험 중"
+    "클라우드 주 경로",
+    "Aside 정지 예정",
+    "vault-agent (비공개)"
    ],
-   "sched": "매일 05:00 (Aside)",
+   "sched": "매일 05:20 클라우드 (GH 디스패처) · 06:00 재시도",
    "vault": [
     {
      "kind": "file",
@@ -292,7 +291,10 @@
      "label": "정리 리포트",
      "daily": "07:00"
     }
-   ]
+   ],
+   "repo": "vault-agent",
+   "workflow": "tidy.yml",
+   "private": true
   },
   {
    "name": "통화·녹음 정리",
@@ -402,8 +404,27 @@
    ]
   },
   {
+   "id": "vault-tidy",
+   "name": "볼트 정리(클라우드)",
+   "repo": "vault-agent",
+   "wf": "tidy.yml",
+   "days": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "at": [
+    "05:20"
+   ],
+   "since": "2026-11-23"
+  },
+  {
    "id": "tidy-fallback",
-   "name": "볼트 정리 대체(PC 실패 시)",
+   "name": "볼트 정리 재시도(05:20 실패 시)",
    "repo": "vault-agent",
    "wf": "tidy.yml",
    "days": [
