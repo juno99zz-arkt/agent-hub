@@ -40,7 +40,7 @@
     "Claude Code",
     "피클 보고"
    ],
-   "sched": "매주 금 18:00 (GH 디스패처 · GitHub 예약 병행) → 토 07:00 피클 보고",
+   "sched": "매주 금 18:00 (GH 디스패처) → 토 07:00 피클 보고",
    "link": "https://github.com/juno99zz-arkt/vault-agent/actions/workflows/weekly-audit.yml",
    "vault": [
     {
@@ -572,8 +572,18 @@
   },
   {
    "title": "카카오톡 요약 수집 확인",
-   "detail": "Gemini 예약 작업에서 4시간 스케줄러·내보내기 메일 확인 (마지막 요약 12일 전)",
-   "until": "2026-11-28"
+   "detail": "Gemini 예약 작업에서 4시간 스케줄러·내보내기 메일 확인 (마지막 요약 12일 전, 2주째)",
+   "until": "2026-11-29"
+  },
+  {
+   "title": "11/23 전환 준비: Apps Script 붙여넣기·Aside 정리 정지",
+   "detail": "Code.gs에 볼트 정리(05:20)·주간 점검 호출 붙여넣기 → Aside 05:00 정리 루틴 정지, 04:55 PC 깨우기 삭제 여부 결정",
+   "until": "2026-11-29"
+  },
+  {
+   "title": "AI 작업기록 '진행 중' 2건 정리",
+   "detail": "Codex 11/09, Aside 11/16 기록을 완료·중단으로 닫기 (2주째)",
+   "until": "2026-11-29"
   }
  ],
  "tokens": [
