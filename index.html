@@ -3,8 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#f1f1f3" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#121312" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#121312">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="AI 허브">
@@ -319,35 +318,21 @@
   /* ═══ 테마: '워크플로 캔버스' (참고: ssaengcho-tip 링크 페이지, 2026-11-22) ═══
      밝은 종이색 바탕 · 점 격자 캔버스 판 · 흰 카드(14px) · 고정폭 라벨 + 색 네모 · 검은 알약 탭 · 분류별 파스텔 색 */
   :root{
-    --bg:#fbfbfa; --canvas:#f1f2f0; --dotc:#d6d8d3; --surface:#ffffff; --raised:#f6f7f5;
-    --line:#e5e6e3; --line-2:#d6d8d3;
-    --text:#1a1c1a; --muted:#6f736e; --dim:#a3a7a1;
-    --ink:#1e201e; --ink-2:#2c2f2c; --ink-fg:#ffffff;
-    --accent:#2f86f6;
-    --ok:#28a745; --warn:#d99a06; --err:#f0507f; --idle:#a3a7a1;
-    --shadow:0 1px 2px rgba(0,0,0,.04);
+    --bg:#121312; --canvas:#191a19; --dotc:#2a2c29; --surface:#1e201e; --raised:#252725;
+    --line:#2c2f2c; --line-2:#383b37;
+    --text:#eef0ec; --muted:#a3a7a1; --dim:#7a7e78;
+    --ink:#2c2f2c; --ink-2:#383b37; --ink-fg:#ffffff;
+    --accent:#5c9ff8; --ok:#4cc36a; --warn:#f6b81a; --err:#f27397; --idle:#6f736e;
+    --shadow:none;
     --sans:"Pretendard Variable","Pretendard","Noto Sans KR",-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
     --mono:"DM Mono","Pretendard Variable",ui-monospace,Menlo,monospace;
-  }
-  @media (prefers-color-scheme:dark){
-    :root{
-      --bg:#121312; --canvas:#191a19; --dotc:#2a2c29; --surface:#1e201e; --raised:#252725;
-      --line:#2c2f2c; --line-2:#383b37;
-      --text:#eef0ec; --muted:#a3a7a1; --dim:#7a7e78;
-      --ink:#2c2f2c; --ink-2:#383b37; --ink-fg:#ffffff;
-      --accent:#5c9ff8; --ok:#4cc36a; --warn:#f6b81a; --err:#f27397; --idle:#6f736e;
-      --shadow:none;
-    }
+    color-scheme:dark;
   }
   body{letter-spacing:-.01em}
 
   /* 분류 색 — 잎·하늘·포도·해·귤 */
-  .c-life{--c:#28a745;--cb:#e2f4e6} .c-work{--c:#2f86f6;--cb:#e5effe} .c-invest{--c:#8b5cf6;--cb:#efe9fe}
-  .c-grow{--c:#c48a00;--cb:#fdf3d6} .c-sys{--c:#ff7a2f;--cb:#ffede2}
-  @media (prefers-color-scheme:dark){
-    .c-life{--c:#4cc36a;--cb:rgba(76,195,106,.14)} .c-work{--c:#5c9ff8;--cb:rgba(92,159,248,.14)} .c-invest{--c:#a78bfa;--cb:rgba(167,139,250,.16)}
-    .c-grow{--c:#f6b81a;--cb:rgba(246,184,26,.14)} .c-sys{--c:#ff9a5c;--cb:rgba(255,154,92,.14)}
-  }
+  .c-life{--c:#4cc36a;--cb:rgba(76,195,106,.14)} .c-work{--c:#5c9ff8;--cb:rgba(92,159,248,.14)} .c-invest{--c:#a78bfa;--cb:rgba(167,139,250,.16)}
+  .c-grow{--c:#f6b81a;--cb:rgba(246,184,26,.14)} .c-sys{--c:#ff9a5c;--cb:rgba(255,154,92,.14)}
 
   /* 점 격자 캔버스 판 */
   .grp,.ops-d{background-color:var(--canvas);background-image:radial-gradient(var(--dotc) 1.2px,transparent 1.3px);background-size:16px 16px;border-radius:22px;padding:14px 18px 20px}
@@ -389,7 +374,7 @@
   .brand{font-weight:600}
   .guide-btn{height:36px;padding:0 14px;border-radius:10px;background:var(--ink);color:var(--ink-fg);font-weight:600}
   .nav-right a.guide-btn:hover{color:var(--ink-fg);opacity:1;background:var(--ink-2)}
-  @media (prefers-color-scheme:dark){.guide-btn{background:#eef0ec;color:#1a1c1a}.nav-right a.guide-btn:hover{background:#fff;color:#1a1c1a}}
+  .guide-btn{background:#eef0ec;color:#1a1c1a}.nav-right a.guide-btn:hover{background:#fff;color:#1a1c1a}
   h1{font-size:28px;line-height:36px;font-weight:700;letter-spacing:-.02em}
   .summary b{font-family:var(--mono)}
   .search input{height:40px;border-radius:10px;border-color:var(--line)}
