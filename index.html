@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f1f1f3" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#141415" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#121312" media="(prefers-color-scheme: dark)">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="AI 허브">
@@ -14,7 +14,8 @@
 <title>AI 허브</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+KR:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
   /* 방향: 차분·정확·약간 따뜻함 / 세계: 새벽 운행표. 풍부한 곳은 '오늘 일정' 운행표 한 곳, 나머지는 조용하게.
      크기 12·13·14·16·24 / 굵기 400·500 / 반경 4·8·12 / 간격 4px 단위 / 강조색은 '지금'과 포커스에만 */
@@ -313,6 +314,102 @@
     dl{grid-template-columns:84px 1fr}
     .close{width:44px;height:44px}
     .toast{bottom:calc(24px + env(safe-area-inset-bottom));max-width:calc(100% - 32px);text-align:center}
+  }
+
+  /* ═══ 테마: '워크플로 캔버스' (참고: ssaengcho-tip 링크 페이지, 2026-11-22) ═══
+     밝은 종이색 바탕 · 점 격자 캔버스 판 · 흰 카드(14px) · 고정폭 라벨 + 색 네모 · 검은 알약 탭 · 분류별 파스텔 색 */
+  :root{
+    --bg:#fbfbfa; --canvas:#f1f2f0; --dotc:#d6d8d3; --surface:#ffffff; --raised:#f6f7f5;
+    --line:#e5e6e3; --line-2:#d6d8d3;
+    --text:#1a1c1a; --muted:#6f736e; --dim:#a3a7a1;
+    --ink:#1e201e; --ink-2:#2c2f2c; --ink-fg:#ffffff;
+    --accent:#2f86f6;
+    --ok:#28a745; --warn:#d99a06; --err:#f0507f; --idle:#a3a7a1;
+    --shadow:0 1px 2px rgba(0,0,0,.04);
+    --sans:"Pretendard Variable","Pretendard","Noto Sans KR",-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    --mono:"DM Mono","Pretendard Variable",ui-monospace,Menlo,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#121312; --canvas:#191a19; --dotc:#2a2c29; --surface:#1e201e; --raised:#252725;
+      --line:#2c2f2c; --line-2:#383b37;
+      --text:#eef0ec; --muted:#a3a7a1; --dim:#7a7e78;
+      --ink:#2c2f2c; --ink-2:#383b37; --ink-fg:#ffffff;
+      --accent:#5c9ff8; --ok:#4cc36a; --warn:#f6b81a; --err:#f27397; --idle:#6f736e;
+      --shadow:none;
+    }
+  }
+  body{letter-spacing:-.01em}
+
+  /* 분류 색 — 잎·하늘·포도·해·귤 */
+  .c-life{--c:#28a745;--cb:#e2f4e6} .c-work{--c:#2f86f6;--cb:#e5effe} .c-invest{--c:#8b5cf6;--cb:#efe9fe}
+  .c-grow{--c:#c48a00;--cb:#fdf3d6} .c-sys{--c:#ff7a2f;--cb:#ffede2}
+  @media (prefers-color-scheme:dark){
+    .c-life{--c:#4cc36a;--cb:rgba(76,195,106,.14)} .c-work{--c:#5c9ff8;--cb:rgba(92,159,248,.14)} .c-invest{--c:#a78bfa;--cb:rgba(167,139,250,.16)}
+    .c-grow{--c:#f6b81a;--cb:rgba(246,184,26,.14)} .c-sys{--c:#ff9a5c;--cb:rgba(255,154,92,.14)}
+  }
+
+  /* 점 격자 캔버스 판 */
+  .grp,.ops-d{background-color:var(--canvas);background-image:radial-gradient(var(--dotc) 1.2px,transparent 1.3px);background-size:16px 16px;border-radius:22px;padding:14px 18px 20px}
+  .grp{margin-top:20px} .grp:first-child{margin-top:16px}
+  .grp>h2{border-bottom:0;padding:0 2px 12px;font:400 13px var(--mono);color:var(--muted);letter-spacing:0}
+  .grp>h2::before{width:9px;height:9px;border-radius:2px}
+  .grp>h2 small{font:400 13px var(--mono);color:var(--dim)}
+
+  /* 흰 카드 */
+  .grid{gap:10px}
+  .card{height:auto;min-height:64px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 12px 12px 14px;box-shadow:var(--shadow);transition:border-color .15s var(--ease),transform .15s var(--ease)}
+  .card:hover,.card.sel{background:var(--surface);border-color:var(--line-2)}
+  .card.sel{box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 30%,transparent)}
+  .card .name{font-size:15px;font-weight:600}
+  .card .acts{opacity:1}
+  .act:hover{background:var(--raised)}
+  .ic{width:36px;height:36px;border-radius:10px}
+  .card:hover .ic,.card.sel .ic{--ring:var(--surface)}
+
+  /* 관제 판 */
+  .ops-d{margin:16px 0 4px;padding:14px 18px 18px}
+  .ops-d>summary{font:400 13px var(--mono);padding:0 2px}
+  .ops-d[open]>summary{padding-bottom:12px}
+  .box{border-radius:14px;border-color:var(--line);padding:16px 18px}
+  .box h2{font-size:15px;font-weight:600}
+  .pill{font:500 11px var(--mono);color:var(--err);border:1px solid color-mix(in srgb,var(--err) 55%,transparent);border-radius:999px;padding:0 7px;text-transform:uppercase}
+
+  /* 검은 알약 분류 탭 */
+  .tabs{display:flex;width:max-content;max-width:100%;gap:4px;margin:8px auto 0;padding:6px;background:var(--ink);border:0;border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.14);position:sticky;top:64px;z-index:8}
+  .tabs button{padding:8px 14px;border-radius:11px;color:#c9ccc6;font-size:14px;font-weight:500}
+  .tabs button:hover{color:#fff}
+  .tabs button small{color:#c9ccc6;background:rgba(255,255,255,.12);border-radius:6px;padding:0 6px;line-height:18px}
+  .tabs button[aria-selected="true"]{background:var(--accent);color:#fff;font-weight:600}
+  .tabs button[aria-selected="true"] small{color:#fff;background:rgba(255,255,255,.25)}
+  .tabs button[aria-selected="true"]::after{display:none}
+
+  /* 머리글 · 버튼 · 입력 */
+  header{background:color-mix(in srgb,var(--bg) 92%,transparent)}
+  .brand{font-weight:600}
+  .guide-btn{height:36px;padding:0 14px;border-radius:10px;background:var(--ink);color:var(--ink-fg);font-weight:600}
+  .nav-right a.guide-btn:hover{color:var(--ink-fg);opacity:1;background:var(--ink-2)}
+  @media (prefers-color-scheme:dark){.guide-btn{background:#eef0ec;color:#1a1c1a}.nav-right a.guide-btn:hover{background:#fff;color:#1a1c1a}}
+  h1{font-size:28px;line-height:36px;font-weight:700;letter-spacing:-.02em}
+  .summary b{font-family:var(--mono)}
+  .search input{height:40px;border-radius:10px;border-color:var(--line)}
+  .seg{height:40px;border-radius:10px;border-color:var(--line);background:var(--surface)}
+  .seg button{border-radius:7px}
+  .seg button[aria-pressed="true"]{background:var(--ink);color:var(--ink-fg)}
+  .icon-btn{width:40px;height:40px;border-radius:10px;border-color:var(--line);background:var(--surface)}
+  .btn{border-radius:10px}
+  .btn.primary{background:var(--ink);border-color:var(--ink);color:var(--ink-fg)}
+  aside{border-radius:22px 0 0 22px}
+
+  @media (max-width:760px){
+    .grp,.ops-d{border-radius:18px;padding:12px 12px 14px;margin-left:-4px;margin-right:-4px}
+    .tabs{width:auto;margin:8px -4px 0;top:56px}
+    .tabs button{padding:8px 12px;font-size:15px}
+    .tile{border-radius:14px;border-color:var(--line);box-shadow:var(--shadow)}
+    .tile .ic{border-radius:12px}
+    .row{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:0 4px 0 12px;margin-bottom:8px;height:64px}
+    .rows{gap:0}
+    aside{border-radius:22px 22px 0 0}
   }
 </style>
 </head>
