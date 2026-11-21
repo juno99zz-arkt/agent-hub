@@ -58,6 +58,10 @@
   .brand svg{color:var(--dim)}
   .nav-right{display:flex;align-items:center;gap:16px;font-size:13px;color:var(--muted)}
   .nav-right a:hover{color:var(--text)}
+  .guide-btn{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 12px;border-radius:8px;background:var(--text);color:var(--bg);font-size:13px;font-weight:500;transition:opacity .15s var(--ease)}
+  .nav-right a.guide-btn:hover{color:var(--bg);opacity:.88}
+  .head-r{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
+  .upd{font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums}
 
   /* 제목 · 분류 탭 */
   .head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:32px 0 12px}
@@ -249,8 +253,9 @@
     .container{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
     .brand .en{display:none}
     .brand .ko{display:inline}
-    .nav-right a{display:none}
-    #updated{font-size:12px}
+    .nav-right a.gh{display:none}
+    .guide-btn{height:36px}
+    .head-r{gap:4px 16px}
     .head{padding:16px 0 4px}
     .head h1{display:none}
     .tabs{gap:24px;margin:0 -16px;padding:0 16px}
@@ -325,8 +330,11 @@
       <span class="en">Juno Agent Hub</span><span class="ko">준오의 AI 허브</span>
     </a>
     <div class="nav-right">
-      <span id="updated">상태 불러오는 중</span>
-      <a href="https://github.com/juno99zz-arkt" target="_blank" rel="noopener">GitHub</a>
+      <a class="guide-btn" href="https://claude.ai/artifact/N6adnrZQoKjCcQfNbPeU42" target="_blank" rel="noopener" title="NoJI 자동화 체계 전체 설명">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg>
+        <span>NoJI 사용설명서</span>
+      </a>
+      <a class="gh" href="https://github.com/juno99zz-arkt" target="_blank" rel="noopener">GitHub</a>
     </div>
   </div>
 </header>
@@ -334,7 +342,7 @@
 <main class="container">
   <div class="head">
     <h1>내 에이전트</h1>
-    <div class="summary" id="summary"></div>
+    <div class="head-r"><div class="summary" id="summary"></div><span id="updated" class="upd">상태 불러오는 중</span></div>
   </div>
 
   <nav class="tabs" id="cats" role="tablist" aria-label="분류"></nav>

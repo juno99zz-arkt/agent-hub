@@ -2,19 +2,6 @@
  "_note": "AI 허브 등록부. agents=카드 목록(cat=분류: 생활·업무·투자·자기계발·시스템 — 화면 위 탭과 아래 묶음이 이 값을 따른다), schedule=GH 디스패처 작업표(Apps Script Code.gs JOBS와 같게 유지), todos=직접 할 일, tokens=만료일 수기 목록(30일 전부터 경고). vault=비공개 볼트에서 읽을 신호(파일 날짜·커밋 시각만). 시각은 KST, 요일 0=일~6=토.",
  "agents": [
   {
-   "name": "NoJI AI 사용설명서",
-   "kind": "User Guide",
-   "cat": "시스템",
-   "type": "web",
-   "desc": "내 AI 자동화 전체를 한눈에 보는 발표형 체계도. 입력 5갈래 → 옵시디언 볼트, 실행 일정, 이슈·보완 항목, 관리표(T)까지.",
-   "tags": [
-    "v9 · 11/20 기준",
-    "관리표로 유지관리",
-    "Claude 아티팩트"
-   ],
-   "url": "https://claude.ai/artifact/N6adnrZQoKjCcQfNbPeU42"
-  },
-  {
    "name": "GH 디스패처",
    "kind": "Scheduler",
    "cat": "시스템",
@@ -26,7 +13,7 @@
     "5분 트리거",
     "3회 연속 실패 시 메일"
    ],
-   "sched": "5분마다 · 작업 9개 + 허브 15분"
+   "sched": "5분마다 · 작업 14개 + 허브 15분"
   },
   {
    "name": "NoJI 주간 점검",
@@ -169,14 +156,15 @@
    "kind": "Hot Issue Archive",
    "cat": "생활",
    "type": "web",
-   "desc": "4시간마다 시사·경제·IT·기업·연예의 급증 이슈를 감시해 딥리서치 HTML 리포트로 쌓는 웹 아카이브입니다. 1호는 11/21 검은 금요일(AI·반도체 폭락) 리포트입니다.",
+   "desc": "Gemini가 4시간마다 시사·경제·IT·기업/노사·연예의 급증 이슈를 감시해 팩트·의혹·추정을 나눈 딥리서치 리포트를 만들고, Apps Script가 15분 안에 메일·옵시디언 기록·이 웹 아카이브로 발행합니다. 원하는 주제는 메일 제목 \"핫이슈-딥리서치\"로 수동 발행합니다.",
    "tags": [
     "Gemini 딥리서치",
-    "1호 11/21 발행",
-    "수동 주제 발행"
+    "메일·옵시디언·웹 자동 발행",
+    "1호 11/21"
    ],
    "url": "https://juno99zz-arkt.github.io/hot-issue-radar/",
-   "repo": "hot-issue-radar"
+   "repo": "hot-issue-radar",
+   "sched": "4시간마다 감시(Gemini) · 15분마다 발행(Apps Script)"
   },
   {
    "name": "HR 인력정보 Easy Finder",
