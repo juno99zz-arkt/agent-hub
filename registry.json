@@ -165,6 +165,20 @@
    "sched": "매일 05:05 동기화 (GH 디스패처 → memo-app)"
   },
   {
+   "name": "핫이슈 레이더",
+   "kind": "Hot Issue Archive",
+   "cat": "생활",
+   "type": "web",
+   "desc": "4시간마다 시사·경제·IT·기업·연예의 급증 이슈를 감시해 딥리서치 HTML 리포트로 쌓는 웹 아카이브입니다. 1호는 11/21 검은 금요일(AI·반도체 폭락) 리포트입니다.",
+   "tags": [
+    "Gemini 딥리서치",
+    "1호 11/21 발행",
+    "수동 주제 발행"
+   ],
+   "url": "https://juno99zz-arkt.github.io/hot-issue-radar/",
+   "repo": "hot-issue-radar"
+  },
+  {
    "name": "HR 인력정보 Easy Finder",
    "kind": "People Search",
    "cat": "업무",
