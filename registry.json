@@ -90,10 +90,8 @@
    "url": "https://juno99zz-arkt.github.io/Invest/",
    "repo": "Invest",
    "workflow": "update_invest.yml",
-   "sched": "매일 06:11 준비(GH 디스패처) → 06:30 분석(Aside) · 월·금 07:07 메일",
-   "watch": [
-    "invest_agent_dry.yml"
-   ]
+   "sched": "매일 06:11 준비 → 06:30 클라우드 분석(GH 디스패처) · 월·금 07:07 메일",
+   "watch": []
   },
   {
    "name": "HR AI 뉴스브리핑",
@@ -511,6 +509,25 @@
    "at": [
     "06:11"
    ]
+  },
+  {
+   "id": "invest-analysis",
+   "name": "투자 AI 분석(클라우드)",
+   "repo": "vault-agent",
+   "wf": "invest-daily.yml",
+   "days": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "at": [
+    "06:30"
+   ],
+   "since": "2026-11-23"
   },
   {
    "id": "memo-weekly",
