@@ -40,7 +40,7 @@
       ]
     },
     {
-      "name": "NOJI 모닝브리프",
+      "name": "모닝브리프",
       "kind": "Morning Brief",
       "cat": "생활",
       "type": "web",
@@ -138,7 +138,7 @@
       "sched": "매일 05:00·22:00 Inbox_memo · 일 07:00 To do (GH 디스패처)"
     },
     {
-      "name": "NOJI캘린더",
+      "name": "나의 캘린더",
       "kind": "Calendar",
       "cat": "생활",
       "type": "web",
@@ -387,7 +387,7 @@
     },
     {
       "id": "noji",
-      "name": "NOJI 캘린더 동기화",
+      "name": "나의 캘린더 동기화",
       "repo": "memo-app",
       "wf": "noji-sync.yml",
       "days": [
