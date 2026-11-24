@@ -242,6 +242,21 @@
       "repo": "opic-al-trainer"
     },
     {
+      "name": "AI Field Notes",
+      "kind": "Study Notes",
+      "cat": "자기계발",
+      "type": "web",
+      "desc": "초심자의 눈으로 매주 AI 기술 하나를 깊이 들여다본 기록입니다. 매주 일요일 저녁 Claude가 주제 후보 5개를 제안하고, 내가 고른 주제로만 리포트를 써서 이 웹 아카이브에 발행합니다.",
+      "tags": [
+        "Claude Code /field-notes",
+        "주제는 내가 고름",
+        "Note No.01 11/24"
+      ],
+      "url": "https://juno99zz-arkt.github.io/ai-field-notes/",
+      "repo": "ai-field-notes",
+      "sched": "매주 일 20:00 주제 제안(Claude 앱 예약) · 발행은 주제를 고를 때"
+    },
+    {
       "name": "삼성 노사 뉴스",
       "kind": "News Briefing",
       "cat": "업무",
@@ -617,6 +632,11 @@
       "title": "스마트딜 레이더 첫 브리핑 확인",
       "detail": "Gemini 예약 작업(11/22 등록). 0. Inbox/Inbox_AI에 YYYY-MM-DD_스마트딜-브리핑.md가 생기는지 — 4~5점 딜 없는 날은 노트가 안 생김",
       "until": "2026-11-29"
+    },
+    {
+      "title": "11/29(일) 20:00 AI Field Notes 첫 주제 제안 확인",
+      "detail": "Claude 앱 예약 작업(field-notes-weekly). 앱이 켜져 있어야 실행됨 — 후보 5개가 오면 번호나 주제로 답해 발행",
+      "until": "2026-11-30"
     }
   ],
   "tokens": [
