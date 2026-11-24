@@ -257,6 +257,28 @@
       "sched": "매주 일 20:00 주제 제안(Claude 앱 예약) · 발행은 주제를 고를 때"
     },
     {
+      "name": "전화영어 복습 코치",
+      "kind": "English Coach",
+      "cat": "자기계발",
+      "type": "auto",
+      "manual": true,
+      "desc": "화·목 전화영어 통화 전사가 올라오면 Gemini가 대화를 주제별로 정리하고, 잘 못 답한 문장을 교정·확장해 옵시디언 복습 노트로 남깁니다. 다음날 07:00 피클 아침 브리핑이 교정 3개와 오늘의 표현을 읽어 주고, 구글 계정 전용 웹앱에서 복습 카드와 자주 하는 실수를 누적 관리합니다.",
+      "tags": [
+        "Actions + Gemini",
+        "피클 수·금 아침",
+        "웹앱(나만 접근)"
+      ],
+      "sched": "화·목 수업 전사 직후 자동(english-coach) · 다음날 07:00 피클",
+      "vault": [
+        {
+          "kind": "commit",
+          "path": "3. Area of Responsibility/전화영어",
+          "label": "전화영어 복습",
+          "warnHours": 168
+        }
+      ]
+    },
+    {
       "name": "삼성 노사 뉴스",
       "kind": "News Briefing",
       "cat": "업무",
@@ -637,6 +659,16 @@
       "title": "11/29(일) 20:00 AI Field Notes 첫 주제 제안 확인",
       "detail": "Claude 앱 예약 작업(field-notes-weekly). 앱이 켜져 있어야 실행됨 — 후보 5개가 오면 번호나 주제로 답해 발행",
       "until": "2026-11-30"
+    },
+    {
+      "title": "전화영어 복습 웹앱 배포 (Apps Script)",
+      "detail": "통화 정리 Agent 프로젝트에 EnglishCoach.gs·english.html 붙여넣기 → 배포 > 웹 앱(실행: 나 · 액세스: 나만). 파일은 spark-harness src/call-agent",
+      "until": "2026-12-01"
+    },
+    {
+      "title": "11/25(수) 07:00 피클이 전화영어 복습(⑤)을 읽는지 확인",
+      "detail": "11/24 수업 전사 후 english-coach가 돌아 3. Area of Responsibility/전화영어에 노트가 생겼는지, Pickle 브리핑용에 ⑤ 구역이 있는지",
+      "until": "2026-11-26"
     }
   ],
   "tokens": [
